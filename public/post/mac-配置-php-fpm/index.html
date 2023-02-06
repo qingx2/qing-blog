@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Mac 配置 PHP_FPM | Maverick</title>
+<meta name="keywords" content="">
+<meta name="description" content="参考: [开发环境]Mac 配置 php-fpm
+使用 brew 安装好 php 后, 运行 php-fpm 时提示我如下错误信息：
+ERROR: failed to open configuration file &#39;/private/etc/php-fpm.conf&#39;: No such file or directory (2)
+ERROR: failed to load configuration file &#39;/private/etc/php-fpm.conf&#39;
+ERROR: FPM initialization failed
+">
+<meta name="author" content="">
+<link rel="canonical" href="https://qingx2.github.io/post/mac-%E9%85%8D%E7%BD%AE-php-fpm/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.bccfefac377bc340f06c260aed1bddf49a4354816d7c570d6aac75a997986c95.css" integrity="sha256-vM/vrDd7w0DwbCYK7Rvd9JpDVIFtfFcNaqx1qZeYbJU=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://qingx2.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://qingx2.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://qingx2.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://qingx2.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://qingx2.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Mac 配置 PHP_FPM" />
+<meta property="og:description" content="参考: [开发环境]Mac 配置 php-fpm
+使用 brew 安装好 php 后, 运行 php-fpm 时提示我如下错误信息：
+ERROR: failed to open configuration file &#39;/private/etc/php-fpm.conf&#39;: No such file or directory (2)
+ERROR: failed to load configuration file &#39;/private/etc/php-fpm.conf&#39;
+ERROR: FPM initialization failed
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://qingx2.github.io/post/mac-%E9%85%8D%E7%BD%AE-php-fpm/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2017-04-28T13:18:23+00:00" />
+<meta property="article:modified_time" content="2017-04-28T13:18:23+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Mac 配置 PHP_FPM"/>
+<meta name="twitter:description" content="参考: [开发环境]Mac 配置 php-fpm
+使用 brew 安装好 php 后, 运行 php-fpm 时提示我如下错误信息：
+ERROR: failed to open configuration file &#39;/private/etc/php-fpm.conf&#39;: No such file or directory (2)
+ERROR: failed to load configuration file &#39;/private/etc/php-fpm.conf&#39;
+ERROR: FPM initialization failed
+"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://qingx2.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Mac 配置 PHP_FPM",
+      "item": "https://qingx2.github.io/post/mac-%E9%85%8D%E7%BD%AE-php-fpm/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Mac 配置 PHP_FPM",
+  "name": "Mac 配置 PHP_FPM",
+  "description": "参考: [开发环境]Mac 配置 php-fpm\n使用 brew 安装好 php 后, 运行 php-fpm 时提示我如下错误信息：\nERROR: failed to open configuration file \u0026#39;/private/etc/php-fpm.conf\u0026#39;: No such file or directory (2) ERROR: failed to load configuration file \u0026#39;/private/etc/php-fpm.conf\u0026#39; ERROR: FPM initialization failed ",
+  "keywords": [
+    
+  ],
+  "articleBody": "参考: [开发环境]Mac 配置 php-fpm\n使用 brew 安装好 php 后, 运行 php-fpm 时提示我如下错误信息：\nERROR: failed to open configuration file '/private/etc/php-fpm.conf': No such file or directory (2) ERROR: failed to load configuration file '/private/etc/php-fpm.conf' ERROR: FPM initialization failed 错误信息显示，不能打开配置文件，cd /private/etc，发现没有 php-fpm.conf 文件，但是有 php-fpm.conf.default 文件。这个文件是默认配置，我们可以复制一份，改名为 php-fpm.conf，然后再根据需要改动配置。\ncp /private/etc/php-fpm.conf.default /private/etc/php-fpm.conf 执行 php-fpm，再次报错：\nERROR: failed to open error_log (/usr/var/log/php-fpm.log): No such file or directory (2) ERROR: failed to post process the configuration ERROR: FPM initialization failed 错误信息显示，不能打开错误日志文件。cd /usr/var/log 发现根本没有这个目录，甚至连 var 目录都没有，加上为了避免权限问题，干脆配置到 /usr/local/var/log 目录。\n修改 php-fpm.conf error_log 配置为 /usr/local/var/log/php-fpm.log，并把 user 和 group 改为和当前用户一样。\n执行 php-fpm，再次报错：\nNOTICE: [pool www] 'user' directive is ignored when FPM is not running as root NOTICE: [pool www] 'group' directive is ignored when FPM is not running as root 于是 sudo php-fpm，再次报错：\nERROR: unable to bind listening socket for address '127.0.0.1:9000': Address already in use (48) ERROR: FPM initialization failed 此时意思很明显了, 就是端口被系统自带的 php-fpm 占用了, 执行如下命令, kill 当前所有 php-fpm 进程:\nkillall php-fpm 再运行:\nphp-fpm -t 提示如下信息, 就说明已经启动成功了\nNOTICE: configuration file /private/etc/php-fpm.conf test is successful ",
+  "wordCount" : "161",
+  "inLanguage": "en",
+  "datePublished": "2017-04-28T13:18:23Z",
+  "dateModified": "2017-04-28T13:18:23Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://qingx2.github.io/post/mac-%E9%85%8D%E7%BD%AE-php-fpm/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Maverick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://qingx2.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://qingx2.github.io/" accesskey="h" title="Maverick (Alt + H)">Maverick</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Mac 配置 PHP_FPM
+    </h1>
+    <div class="post-meta"><span title='2017-04-28 13:18:23 +0000 UTC'>April 28, 2017</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>参考: <a href="https://github.com/musicode/test/issues/5">[开发环境]Mac 配置 php-fpm</a></p>
+<p>使用 brew 安装好 php 后, 运行<code> php-fpm</code> 时提示我如下错误信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>ERROR: failed to open configuration file <span style="color:#e6db74">&#39;/private/etc/php-fpm.conf&#39;</span>: No such file or directory <span style="color:#f92672">(</span>2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>ERROR: failed to load configuration file <span style="color:#e6db74">&#39;/private/etc/php-fpm.conf&#39;</span>
+</span></span><span style="display:flex;"><span>ERROR: FPM initialization failed
+</span></span></code></pre></div><p>错误信息显示，不能打开配置文件，<code>cd /private/etc</code>，发现没有 <code>php-fpm.conf</code> 文件，但是有 <code>php-fpm.conf.default</code> 文件。这个文件是默认配置，我们可以复制一份，改名为 <code>php-fpm.conf</code>，然后再根据需要改动配置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cp /private/etc/php-fpm.conf.default /private/etc/php-fpm.conf
+</span></span></code></pre></div><p>执行 <code>php-fpm</code>，再次报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>ERROR: failed to open error_log <span style="color:#f92672">(</span>/usr/var/log/php-fpm.log<span style="color:#f92672">)</span>: No such file or directory <span style="color:#f92672">(</span>2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>ERROR: failed to post process the configuration
+</span></span><span style="display:flex;"><span>ERROR: FPM initialization failed
+</span></span></code></pre></div><p>错误信息显示，不能打开错误日志文件。<code>cd /usr/var/log</code> 发现根本没有这个目录，甚至连 <strong>var</strong> 目录都没有，加上为了避免权限问题，干脆配置到 <strong>/usr/local/var/log</strong> 目录。</p>
+<p>修改 <strong>php-fpm.conf</strong> <code>error_log</code> 配置为 <code>/usr/local/var/log/php-fpm.log</code>，并把 <code>user</code> 和 <code>group</code> 改为和当前用户一样。</p>
+<p>执行 <code>php-fpm</code>，再次报错：</p>
+<pre tabindex="0"><code>NOTICE: [pool www] &#39;user&#39; directive is ignored when FPM is not running as root
+NOTICE: [pool www] &#39;group&#39; directive is ignored when FPM is not running as root
+</code></pre><p>于是 <code>sudo php-fpm</code>，再次报错：</p>
+<pre tabindex="0"><code>ERROR: unable to bind listening socket for address &#39;127.0.0.1:9000&#39;: Address already in use (48)
+ERROR: FPM initialization failed
+</code></pre><p>此时意思很明显了, 就是端口被系统自带的 php-fpm 占用了, 执行如下命令, kill 当前所有 php-fpm 进程:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>killall php-fpm
+</span></span></code></pre></div><p>再运行:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>php-fpm -t
+</span></span></code></pre></div><p>提示如下信息, 就说明已经启动成功了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>NOTICE: configuration file /private/etc/php-fpm.conf test is successful
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://qingx2.github.io/">Maverick</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

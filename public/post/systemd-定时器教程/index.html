@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Systemd 定时器教程 | Maverick</title>
+<meta name="keywords" content="">
+<meta name="description" content="作者： 阮一峰 日期： 2018年3月30日
+Systemd 作为 Linux 的系统启动器，功能强大。
+本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。">
+<meta name="author" content="">
+<link rel="canonical" href="https://qingx2.github.io/post/systemd-%E5%AE%9A%E6%97%B6%E5%99%A8%E6%95%99%E7%A8%8B/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.bccfefac377bc340f06c260aed1bddf49a4354816d7c570d6aac75a997986c95.css" integrity="sha256-vM/vrDd7w0DwbCYK7Rvd9JpDVIFtfFcNaqx1qZeYbJU=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://qingx2.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://qingx2.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://qingx2.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://qingx2.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://qingx2.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Systemd 定时器教程" />
+<meta property="og:description" content="作者： 阮一峰 日期： 2018年3月30日
+Systemd 作为 Linux 的系统启动器，功能强大。
+本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://qingx2.github.io/post/systemd-%E5%AE%9A%E6%97%B6%E5%99%A8%E6%95%99%E7%A8%8B/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2018-06-09T18:14:12+00:00" />
+<meta property="article:modified_time" content="2018-06-09T18:14:12+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Systemd 定时器教程"/>
+<meta name="twitter:description" content="作者： 阮一峰 日期： 2018年3月30日
+Systemd 作为 Linux 的系统启动器，功能强大。
+本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://qingx2.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Systemd 定时器教程",
+      "item": "https://qingx2.github.io/post/systemd-%E5%AE%9A%E6%97%B6%E5%99%A8%E6%95%99%E7%A8%8B/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Systemd 定时器教程",
+  "name": "Systemd 定时器教程",
+  "description": "作者： 阮一峰 日期： 2018年3月30日\nSystemd 作为 Linux 的系统启动器，功能强大。\n本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "作者： 阮一峰 日期： 2018年3月30日\nSystemd 作为 Linux 的系统启动器，功能强大。\n本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。\n一、定时任务 所谓定时任务，就是未来的某个或多个时点，预定要执行的任务，比如每五分钟收一次邮件、每天半夜两点分析一下日志等等。\nLinux 系统通常都使用 cron 设置定时任务，但是 Systemd 也有这个功能，而且优点显著。\n自动生成日志，配合 Systemd 的日志工具，很方便除错 可以设置内存和 CPU 的使用额度，比如最多使用50%的 CPU 任务可以拆分，依赖其他 Systemd 单元，完成非常复杂的任务 下面，我就来演示一个 Systemd 定时任务：每小时发送一封电子邮件。\n二、邮件脚本 先写一个发邮件的脚本mail.sh。\n#!/usr/bin/env bash echo \"This is the body\" | /usr/bin/mail -s \"Subject\" someone@example.com 上面代码的someone@example.com，请替换成你的邮箱地址。\n然后，执行这个脚本。\n$ bash mail.sh 执行后，你应该就会收到一封邮件，标题为Subject。\n如果你的 Linux 系统不能发邮件，建议安装 ssmtp 或者 msmtp。另外，mail命令的用法，可以参考这里。\n三、Systemd 单元 学习 Systemd 的第一步，就是搞懂\"单元\"（unit）是什么。\n简单说，单元就是 Systemd 的最小功能单位，是单个进程的描述。一个个小的单元互相调用和依赖，组成一个庞大的任务管理系统，这就是 Systemd 的基本思想。\n由于 Systemd 要做的事情太多，导致单元有很多不同的种类，大概一共有12种。举例来说，Service 单元负责后台服务，Timer 单元负责定时器，Slice 单元负责资源的分配。\n每个单元都有一个单元描述文件，它们分散在三个目录。\n/lib/systemd/system：系统默认的单元文件 /etc/systemd/system：用户安装的软件的单元文件 /usr/lib/systemd/system：用户自己定义的单元文件 下面的命令可以查看所有的单元文件。\n# 查看所有单元 $ systemctl list-unit-files # 查看所有 Service 单元 $ systemctl list-unit-files --type service # 查看所有 Timer 单元 $ systemctl list-unit-files --type timer 四、单元的管理命令 下面是常用的单元管理命令。\n# 启动单元 $ systemctl start [UnitName] # 关闭单元 $ systemctl stop [UnitName] # 重启单元 $ systemctl restart [UnitName] # 杀死单元进程 $ systemctl kill [UnitName] # 查看单元状态 $ systemctl status [UnitName] # 开机自动执行该单元 $ systemctl enable [UnitName] # 关闭开机自动执行 $ systemctl disable [UnitName] 五、Service 单元 前面说过，Service 单元就是所要执行的任务，比如发送邮件就是一种 Service。\n新建 Service 非常简单，就是在/usr/lib/systemd/system目录里面新建一个文件，比如mytimer.service文件，你可以写入下面的内容。\n[Unit] Description=MyTimer [Service] ExecStart=/bin/bash /path/to/mail.sh 可以看到，这个 Service 单元文件分成两个部分。\n[Unit]部分介绍本单元的基本信息（即元数据），Description字段给出这个单元的简单介绍（名字叫做MyTimer）。\n[Service]部分用来定制行为，Systemd 提供许多字段。\nExecStart：systemctl start所要执行的命令 ExecStop：systemctl stop所要执行的命令 ExecReload：systemctl reload所要执行的命令 ExecStartPre：ExecStart之前自动执行的命令 ExecStartPost：ExecStart之后自动执行的命令 ExecStopPost：ExecStop之后自动执行的命令 注意，定义的时候，所有路径都要写成绝对路径，比如bash要写成/bin/bash，否则 Systemd 会找不到。\n现在，启动这个 Service。\n$ sudo systemctl start mytimer.service 如果一切正常，你应该就会收到一封邮件。\n六、Timer 单元 Service 单元只是定义了如何执行任务，要定时执行这个 Service，还必须定义 Timer 单元。\n/usr/lib/systemd/system目录里面，新建一个mytimer.timer文件，写入下面的内容。\n[Unit] Description=Runs mytimer every hour [Timer] OnUnitActiveSec=1h Unit=mytimer.service [Install] WantedBy=multi-user.target 这个 Timer 单元文件分成几个部分。\n[Unit]部分定义元数据。\n[Timer]部分定制定时器。Systemd 提供以下一些字段。\nOnActiveSec：定时器生效后，多少时间开始执行任务 OnBootSec：系统启动后，多少时间开始执行任务 OnStartupSec：Systemd 进程启动后，多少时间开始执行任务 OnUnitActiveSec：该单元上次执行后，等多少时间再次执行 OnUnitInactiveSec： 定时器上次关闭后多少时间，再次执行 OnCalendar：基于绝对时间，而不是相对时间执行 AccuracySec：如果因为各种原因，任务必须推迟执行，推迟的最大秒数，默认是60秒 Unit：真正要执行的任务，默认是同名的带有.service后缀的单元 Persistent：如果设置了该字段，即使定时器到时没有启动，也会自动执行相应的单元 WakeSystem：如果系统休眠，是否自动唤醒系统 上面的脚本里面，OnUnitActiveSec=1h表示一小时执行一次任务。其他的写法还有OnUnitActiveSec=*-*-* 02:00:00表示每天凌晨两点执行，OnUnitActiveSec=Mon *-*-* 02:00:00表示每周一凌晨两点执行，具体请参考官方文档。\n七、[Install] 和 target mytimer.timer文件里面，还有一个[Install]部分，定义开机自启动（systemctl enable）和关闭开机自启动（systemctl disable）这个单元时，所要执行的命令。\n上面脚本中，[Install]部分只写了一个字段，即WantedBy=multi-user.target。它的意思是，如果执行了systemctl enable mytimer.timer（只要开机，定时器自动生效），那么该定时器归属于multi-user.target。\n所谓 Target 指的是一组相关进程，有点像 init 进程模式下面的启动级别。启动某个Target 的时候，属于这个 Target 的所有进程都会全部启动。\nmulti-user.target是一个最常用的 Target，意为多用户模式。也就是说，当系统以多用户模式启动时，就会一起启动mytimer.timer。它背后的操作其实很简单，执行systemctl enable mytimer.timer命令时，就会在multi-user.target.wants目录里面创建一个符号链接，指向mytimer.timer。\n八、定时器的相关命令 下面，启动刚刚新建的这个定时器。\n$ sudo systemctl start mytimer.timer 你应该立刻就会收到邮件，然后每个小时都会收到同样邮件。\n查看这个定时器的状态。\n$ systemctl status mytimer.timer 查看所有正在运行的定时器。\n$ systemctl list-timers 关闭这个定时器。\n$ sudo systemctl stop myscript.timer 下次开机，自动运行这个定时器。\n$ sudo systemctl enable myscript.timer 关闭定时器的开机自启动。\n$ sudo systemctl disable myscript.timer 九、日志相关命令 如果发生问题，就需要查看日志。Systemd 的日志功能很强，提供统一的命令。\n# 查看整个日志 $ sudo journalctl # 查看 mytimer.timer 的日志 $ sudo journalctl -u mytimer.timer # 查看 mytimer.timer 和 mytimer.service 的日志 $ sudo journalctl -u mytimer # 从结尾开始查看最新日志 $ sudo journalctl -f # 从结尾开始查看 mytimer.timer 的日志 $ journalctl -f -u timer.timer 十、参考链接 How to Use Systemd Timers, by Jason Graham Using systemd as a better cron, by luqmaan Getting started with systemd, by CoreOS systemd/Timers, by ArchWiki Understanding Systemd Units and Unit Files, by Justin Ellingwood （完)\n",
+  "wordCount" : "362",
+  "inLanguage": "en",
+  "datePublished": "2018-06-09T18:14:12Z",
+  "dateModified": "2018-06-09T18:14:12Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://qingx2.github.io/post/systemd-%E5%AE%9A%E6%97%B6%E5%99%A8%E6%95%99%E7%A8%8B/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Maverick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://qingx2.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://qingx2.github.io/" accesskey="h" title="Maverick (Alt + H)">Maverick</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Systemd 定时器教程
+    </h1>
+    <div class="post-meta"><span title='2018-06-09 18:14:12 +0000 UTC'>June 9, 2018</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>作者： <a href="http://www.ruanyifeng.com/">阮一峰</a> 日期： <a href="http://www.ruanyifeng.com/blog/2018/03/">2018年3月30日</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html">Systemd</a> 作为 Linux 的系统启动器，功能强大。</p>
+<p>本文通过一个简单例子，介绍 Systemd 如何设置定时任务。这不仅实用，而且可以作为 Systemd 的上手教程。</p>
+<p><img loading="lazy" src="http://www.ruanyifeng.com/blogimg/asset/2018/bg2018033001.jpg" alt="img"  />
+</p>
+<h2 id="一定时任务">一、定时任务<a hidden class="anchor" aria-hidden="true" href="#一定时任务">#</a></h2>
+<p>所谓定时任务，就是未来的某个或多个时点，预定要执行的任务，比如每五分钟收一次邮件、每天半夜两点分析一下日志等等。</p>
+<p>Linux 系统通常都使用 <a href="https://wiki.archlinux.org/index.php/Cron_%28%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%29">cron</a> 设置定时任务，但是 Systemd 也有这个功能，而且优点显著。</p>
+<blockquote>
+<ul>
+<li>自动生成日志，配合 Systemd 的日志工具，很方便除错</li>
+<li>可以设置内存和 CPU 的使用额度，比如最多使用50%的 CPU</li>
+<li>任务可以拆分，依赖其他 Systemd 单元，完成非常复杂的任务</li>
+</ul>
+</blockquote>
+<p>下面，我就来演示一个 Systemd 定时任务：每小时发送一封电子邮件。</p>
+<h2 id="二邮件脚本">二、邮件脚本<a hidden class="anchor" aria-hidden="true" href="#二邮件脚本">#</a></h2>
+<p>先写一个发邮件的脚本<code>mail.sh</code>。</p>
+<blockquote>
+<pre tabindex="0"><code>#!/usr/bin/env bash
+
+echo &#34;This is the body&#34; | /usr/bin/mail -s &#34;Subject&#34; someone@example.com
+</code></pre></blockquote>
+<p>上面代码的<code>someone@example.com</code>，请替换成你的邮箱地址。</p>
+<p>然后，执行这个脚本。</p>
+<blockquote>
+<pre tabindex="0"><code>$ bash mail.sh
+</code></pre></blockquote>
+<p>执行后，你应该就会收到一封邮件，标题为<code>Subject</code>。</p>
+<p>如果你的 Linux 系统不能发邮件，建议安装 <a href="http://tombuntu.com/index.php/2008/10/21/sending-email-from-your-system-with-ssmtp/">ssmtp</a> 或者 <a href="https://wiki.archlinux.org/index.php/msmtp">msmtp</a>。另外，<code>mail</code>命令的用法，可以参考<a href="https://www.binarytides.com/linux-mail-command-examples/">这里</a>。</p>
+<h2 id="三systemd-单元">三、Systemd 单元<a hidden class="anchor" aria-hidden="true" href="#三systemd-单元">#</a></h2>
+<p>学习 Systemd 的第一步，就是搞懂&quot;单元&quot;（unit）是什么。</p>
+<p>简单说，单元就是 Systemd 的最小功能单位，是单个进程的描述。一个个小的单元互相调用和依赖，组成一个庞大的任务管理系统，这就是 Systemd 的基本思想。</p>
+<p>由于 Systemd 要做的事情太多，导致单元有很多<a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files">不同的种类</a>，大概一共有12种。举例来说，Service 单元负责后台服务，Timer 单元负责定时器，Slice 单元负责资源的分配。</p>
+<p>每个单元都有一个单元描述文件，它们分散在三个目录。</p>
+<blockquote>
+<ul>
+<li><code>/lib/systemd/system</code>：系统默认的单元文件</li>
+<li><code>/etc/systemd/system</code>：用户安装的软件的单元文件</li>
+<li><code>/usr/lib/systemd/system</code>：用户自己定义的单元文件</li>
+</ul>
+</blockquote>
+<p>下面的命令可以查看所有的单元文件。</p>
+<blockquote>
+<pre tabindex="0"><code># 查看所有单元
+$ systemctl list-unit-files
+
+# 查看所有 Service 单元
+$ systemctl list-unit-files --type service
+
+# 查看所有 Timer 单元
+$ systemctl list-unit-files --type timer
+</code></pre></blockquote>
+<h2 id="四单元的管理命令">四、单元的管理命令<a hidden class="anchor" aria-hidden="true" href="#四单元的管理命令">#</a></h2>
+<p>下面是常用的单元管理命令。</p>
+<blockquote>
+<pre tabindex="0"><code># 启动单元
+$ systemctl start [UnitName]
+
+# 关闭单元
+$ systemctl stop [UnitName]
+
+# 重启单元
+$ systemctl restart [UnitName]
+
+# 杀死单元进程
+$ systemctl kill [UnitName]
+
+# 查看单元状态
+$ systemctl status [UnitName]
+
+# 开机自动执行该单元
+$ systemctl enable [UnitName]
+
+# 关闭开机自动执行
+$ systemctl disable [UnitName]
+</code></pre></blockquote>
+<h2 id="五service-单元">五、Service 单元<a hidden class="anchor" aria-hidden="true" href="#五service-单元">#</a></h2>
+<p>前面说过，Service 单元就是所要执行的任务，比如发送邮件就是一种 Service。</p>
+<p>新建 Service 非常简单，就是在<code>/usr/lib/systemd/system</code>目录里面新建一个文件，比如<code>mytimer.service</code>文件，你可以写入下面的内容。</p>
+<blockquote>
+<pre tabindex="0"><code>[Unit]
+Description=MyTimer
+
+[Service]
+ExecStart=/bin/bash /path/to/mail.sh
+</code></pre></blockquote>
+<p>可以看到，这个 Service 单元文件分成两个部分。</p>
+<p><code>[Unit]</code>部分介绍本单元的基本信息（即元数据），<code>Description</code>字段给出这个单元的简单介绍（名字叫做<code>MyTimer</code>）。</p>
+<p><code>[Service]</code>部分用来定制行为，Systemd 提供许多字段。</p>
+<blockquote>
+<ul>
+<li><code>ExecStart</code>：<code>systemctl start</code>所要执行的命令</li>
+<li><code>ExecStop</code>：<code>systemctl stop</code>所要执行的命令</li>
+<li><code>ExecReload</code>：<code>systemctl reload</code>所要执行的命令</li>
+<li><code>ExecStartPre</code>：<code>ExecStart</code>之前自动执行的命令</li>
+<li><code>ExecStartPost</code>：<code>ExecStart</code>之后自动执行的命令</li>
+<li><code>ExecStopPost</code>：<code>ExecStop</code>之后自动执行的命令</li>
+</ul>
+</blockquote>
+<p>注意，定义的时候，所有路径都要写成绝对路径，比如<code>bash</code>要写成<code>/bin/bash</code>，否则 Systemd 会找不到。</p>
+<p>现在，启动这个 Service。</p>
+<blockquote>
+<pre tabindex="0"><code>$ sudo systemctl start mytimer.service
+</code></pre></blockquote>
+<p>如果一切正常，你应该就会收到一封邮件。</p>
+<h2 id="六timer-单元">六、Timer 单元<a hidden class="anchor" aria-hidden="true" href="#六timer-单元">#</a></h2>
+<p>Service 单元只是定义了如何执行任务，要定时执行这个 Service，还必须定义 Timer 单元。</p>
+<p><code>/usr/lib/systemd/system</code>目录里面，新建一个<code>mytimer.timer</code>文件，写入下面的内容。</p>
+<blockquote>
+<pre tabindex="0"><code>[Unit]
+Description=Runs mytimer every hour
+
+[Timer]
+OnUnitActiveSec=1h
+Unit=mytimer.service
+
+[Install]
+WantedBy=multi-user.target
+</code></pre></blockquote>
+<p>这个 Timer 单元文件分成几个部分。</p>
+<p><code>[Unit]</code>部分定义元数据。</p>
+<p><code>[Timer]</code>部分定制定时器。Systemd 提供以下一些字段。</p>
+<blockquote>
+<ul>
+<li><code>OnActiveSec</code>：定时器生效后，多少时间开始执行任务</li>
+<li><code>OnBootSec</code>：系统启动后，多少时间开始执行任务</li>
+<li><code>OnStartupSec</code>：Systemd 进程启动后，多少时间开始执行任务</li>
+<li><code>OnUnitActiveSec</code>：该单元上次执行后，等多少时间再次执行</li>
+<li><code>OnUnitInactiveSec</code>： 定时器上次关闭后多少时间，再次执行</li>
+<li><code>OnCalendar</code>：基于绝对时间，而不是相对时间执行</li>
+<li><code>AccuracySec</code>：如果因为各种原因，任务必须推迟执行，推迟的最大秒数，默认是60秒</li>
+<li><code>Unit</code>：真正要执行的任务，默认是同名的带有<code>.service</code>后缀的单元</li>
+<li><code>Persistent</code>：如果设置了该字段，即使定时器到时没有启动，也会自动执行相应的单元</li>
+<li><code>WakeSystem</code>：如果系统休眠，是否自动唤醒系统</li>
+</ul>
+</blockquote>
+<p>上面的脚本里面，<code>OnUnitActiveSec=1h</code>表示一小时执行一次任务。其他的写法还有<code>OnUnitActiveSec=*-*-* 02:00:00</code>表示每天凌晨两点执行，<code>OnUnitActiveSec=Mon *-*-* 02:00:00</code>表示每周一凌晨两点执行，具体请参考<a href="https://www.freedesktop.org/software/systemd/man/systemd.time.html">官方文档</a>。</p>
+<h2 id="七install-和-target">七、[Install] 和 target<a hidden class="anchor" aria-hidden="true" href="#七install-和-target">#</a></h2>
+<p><code>mytimer.timer</code>文件里面，还有一个<code>[Install]</code>部分，定义开机自启动（<code>systemctl enable</code>）和关闭开机自启动（<code>systemctl disable</code>）这个单元时，所要执行的命令。</p>
+<p>上面脚本中，<code>[Install]</code>部分只写了一个字段，即<code>WantedBy=multi-user.target</code>。它的意思是，如果执行了<code>systemctl enable mytimer.timer</code>（只要开机，定时器自动生效），那么该定时器归属于<code>multi-user.target</code>。</p>
+<p>所谓 Target 指的是一组相关进程，有点像 init 进程模式下面的启动级别。启动某个Target 的时候，属于这个 Target 的所有进程都会全部启动。</p>
+<p><code>multi-user.target</code>是一个最常用的 Target，意为多用户模式。也就是说，当系统以多用户模式启动时，就会一起启动<code>mytimer.timer</code>。它背后的操作其实很简单，执行<code>systemctl enable mytimer.timer</code>命令时，就会在<code>multi-user.target.wants</code>目录里面创建一个符号链接，指向<code>mytimer.timer</code>。</p>
+<h2 id="八定时器的相关命令">八、定时器的相关命令<a hidden class="anchor" aria-hidden="true" href="#八定时器的相关命令">#</a></h2>
+<p>下面，启动刚刚新建的这个定时器。</p>
+<blockquote>
+<pre tabindex="0"><code>$ sudo systemctl start mytimer.timer
+</code></pre></blockquote>
+<p>你应该立刻就会收到邮件，然后每个小时都会收到同样邮件。</p>
+<p>查看这个定时器的状态。</p>
+<blockquote>
+<pre tabindex="0"><code>$ systemctl status mytimer.timer
+</code></pre></blockquote>
+<p>查看所有正在运行的定时器。</p>
+<blockquote>
+<pre tabindex="0"><code>$ systemctl list-timers
+</code></pre></blockquote>
+<p>关闭这个定时器。</p>
+<blockquote>
+<pre tabindex="0"><code>$ sudo systemctl stop myscript.timer
+</code></pre></blockquote>
+<p>下次开机，自动运行这个定时器。</p>
+<blockquote>
+<pre tabindex="0"><code>$ sudo systemctl enable myscript.timer
+</code></pre></blockquote>
+<p>关闭定时器的开机自启动。</p>
+<blockquote>
+<pre tabindex="0"><code>$ sudo systemctl disable myscript.timer
+</code></pre></blockquote>
+<h2 id="九日志相关命令">九、日志相关命令<a hidden class="anchor" aria-hidden="true" href="#九日志相关命令">#</a></h2>
+<p>如果发生问题，就需要查看日志。Systemd 的日志功能很强，提供统一的命令。</p>
+<blockquote>
+<pre tabindex="0"><code># 查看整个日志
+$ sudo journalctl
+
+# 查看 mytimer.timer 的日志
+$ sudo journalctl -u mytimer.timer
+
+# 查看 mytimer.timer 和 mytimer.service 的日志
+$ sudo journalctl -u mytimer
+
+# 从结尾开始查看最新日志
+$ sudo journalctl -f
+
+# 从结尾开始查看 mytimer.timer 的日志
+$ journalctl -f -u timer.timer
+</code></pre></blockquote>
+<h2 id="十参考链接">十、参考链接<a hidden class="anchor" aria-hidden="true" href="#十参考链接">#</a></h2>
+<ul>
+<li><a href="https://jason.the-graham.com/2013/03/06/how-to-use-systemd-timers/">How to Use Systemd Timers</a>, by Jason Graham</li>
+<li><a href="https://medium.com/horrible-hacks/using-systemd-as-a-better-cron-a4023eea996d">Using systemd as a better cron</a>, by luqmaan</li>
+<li><a href="https://coreos.com/os/docs/latest/getting-started-with-systemd.html">Getting started with systemd</a>, by CoreOS</li>
+<li><a href="https://wiki.archlinux.org/index.php/Systemd/Timers">systemd/Timers</a>, by ArchWiki</li>
+<li><a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files">Understanding Systemd Units and Unit Files</a>, by Justin Ellingwood</li>
+</ul>
+<p>（完)</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://qingx2.github.io/">Maverick</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Yii-自动加载 | Maverick</title>
+<meta name="keywords" content="">
+<meta name="description" content="入口脚本(web/index.php)
+Yii2的advanced版本默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。
+Web服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是index.php了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。
+说了这么多，来看看入口文件内容:">
+<meta name="author" content="">
+<link rel="canonical" href="https://qingx2.github.io/post/yii-%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.bccfefac377bc340f06c260aed1bddf49a4354816d7c570d6aac75a997986c95.css" integrity="sha256-vM/vrDd7w0DwbCYK7Rvd9JpDVIFtfFcNaqx1qZeYbJU=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://qingx2.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://qingx2.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://qingx2.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://qingx2.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://qingx2.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Yii-自动加载" />
+<meta property="og:description" content="入口脚本(web/index.php)
+Yii2的advanced版本默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。
+Web服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是index.php了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。
+说了这么多，来看看入口文件内容:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://qingx2.github.io/post/yii-%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2017-09-28T23:14:08+00:00" />
+<meta property="article:modified_time" content="2017-09-28T23:14:08+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Yii-自动加载"/>
+<meta name="twitter:description" content="入口脚本(web/index.php)
+Yii2的advanced版本默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。
+Web服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是index.php了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。
+说了这么多，来看看入口文件内容:"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://qingx2.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Yii-自动加载",
+      "item": "https://qingx2.github.io/post/yii-%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Yii-自动加载",
+  "name": "Yii-自动加载",
+  "description": "入口脚本(web/index.php) Yii2的advanced版本默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。\nWeb服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是index.php了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。\n说了这么多，来看看入口文件内容:\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "入口脚本(web/index.php) Yii2的advanced版本默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。\nWeb服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是index.php了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。\n说了这么多，来看看入口文件内容:\n\u003c?php // 定义是否处于DEBUG模式(框架初始化时 ./init 选择运行环境会影响此处代码是否会产生) defined('YII_DEBUG') or define('YII_DEBUG', true); defined('YII_ENV') or define('YII_ENV', 'dev'); // 载入composer管理依赖包,此处实现了第三方的composer包可以直接调用(因为composer有个autoload.php文件,已经处理好载入类文件的问题) require(__DIR__ . '/../../vendor/autoload.php'); // 载入基础类文件(核心,没有它就不能算是框架了) require(__DIR__ . '/../../vendor/yiisoft/yii2/Yii.php'); // 载入公共的全局配置(各应用之间的目录别名就定义在此) require(__DIR__ . '/../../common/config/bootstrap.php'); // 本server的相关全局配置 require(__DIR__ . '/../config/bootstrap.php'); // 合并所有配置项参数,并调用 Application-\u003erun() $config = yii\\helpers\\ArrayHelper::merge( require(__DIR__ . '/../../common/config/main.php'), require(__DIR__ . '/../../common/config/main-local.php'), require(__DIR__ . '/../config/main.php'), require(__DIR__ . '/../config/main-local.php') ); (new yii\\web\\Application($config))-\u003erun(); 核心基础类(Yii.php) 说vendor/yiisoft/yii2/Yii.php这个类是核心类呢，也不大准确，因为它其实只是一个子类，真正厉害的是它所继承的BaseYii.php，先看一下文件内容：\n// 此处还不能实现自动加载类,哈哈,所以只好简单粗暴require进来了,万变不离其宗 require(__DIR__ . '/BaseYii.php'); class Yii extends \\yii\\BaseYii { } spl_autoload_register(['Yii', 'autoload'], true, true); Yii::$classMap = require(__DIR__ . '/classes.php'); Yii::$container = new yii\\di\\Container(); BaseYii.php\n下面分析一下Yii.php的下面三行代码:\n1. spl_autoload_register([‘Yii’, ‘autoload’], true, true); 此处将yii\\BaseYii::autoload方法注册为自动加载方法，当new一个找不到类的时候，此autoload方法会自动被调用， PHP5.3版本后增加spl_autoload_register函数，使现在的主流框架才有了这么一套自动加载的利器。\n来研究一下autoload方法实现了些什么\npublic static function autoload($className) { // 如果 new 未找到的类是 yii2 内置的核心类，便可以快速根据类名找到其对应的路径 if (isset(static::$classMap[$className])) { $classFile = static::$classMap[$className]; if ($classFile[0] === '@') { $classFile = static::getAlias($classFile); } } elseif (strpos($className, '\\\\') !== false) { // 自定义类自动载入前替换动作 // 将namespace规范的 \\ 替换为 / 文件目录地址 $classFile = static::getAlias('@' . str_replace('\\\\', '/', $className) . '.php', false); if ($classFile === false || !is_file($classFile)) { return; } } else { return; } include($classFile); if (YII_DEBUG \u0026\u0026 !class_exists($className, false) \u0026\u0026 !interface_exists($className, false) \u0026\u0026 !trait_exists($className, false)) { throw new UnknownClassException(\"Unable to find '$className' in file: $classFile. Namespace missing?\"); } } 此处自定义类的自动载入涉及到一个别名的概念:\n$classFile = static::getAlias('@' . str_replace('\\\\', '/', $className) . '.php', false); BaseYii文件有个专门存储别名的属性public static $aliases = ['@yii' =\u003e __DIR__]; 回过头看入口文件处引入的require(__DIR__ . '/../../common/config/bootstrap.php');，调用BaseYii内的setAlias()方法将server根目录存入$aliases属性:\n\u003c?php Yii::setAlias('@common', dirname(__DIR__)); Yii::setAlias('@frontend', dirname(dirname(__DIR__)) . '/frontend'); Yii::setAlias('@backend', dirname(dirname(__DIR__)) . '/backend'); Yii::setAlias('@console', dirname(dirname(__DIR__)) . '/console'); 那么frontend\\models\\User通过转换后就会去获得 frontend项目下的User文件文件路径，第二个参数决定如果没有找到这个文件是否抛出异常\n$classFile = static::getAlias('@frontend/models/User.php', false); 2. Yii::$classMap = require(DIR . ‘/classes.php’); 这个目录就很直接了，保存的是框架的核心基础类对应的类文件路径\n此处的常量YII2_PATH已在BaseYii中进行了定义defined('YII2_PATH') or define('YII2_PATH', __DIR__);\nreturn [ 'yii\\base\\Action' =\u003e YII2_PATH . '/base/Action.php', 'yii\\base\\ActionEvent' =\u003e YII2_PATH . '/base/ActionEvent.php', 'yii\\base\\ActionFilter' =\u003e YII2_PATH . '/base/ActionFilter.php', 'yii\\base\\Application' =\u003e YII2_PATH . '/base/Application.php', 'yii\\base\\ArrayAccessTrait' =\u003e YII2_PATH . '/base/ArrayAccessTrait.php', 'yii\\base\\Arrayable' =\u003e YII2_PATH . '/base/Arrayable.php', 'yii\\base\\ArrayableTrait' =\u003e YII2_PATH . '/base/ArrayableTrait.php', 'yii\\base\\Behavior' =\u003e YII2_PATH . '/base/Behavior.php', 'yii\\base\\BootstrapInterface' =\u003e YII2_PATH . '/base/BootstrapInterface.php', 'yii\\base\\Component' =\u003e YII2_PATH . '/base/Component.php', // ....... ]; 3. Yii::$container = new yii\\di\\Container(); 这一步的操作是将实例化依赖注入容器，并赋值给 3. Yii::$container ，Yii内部核心对此类使用非常普遍，占有很高的地位！由 Yii 继承 BaseYii::createObject 里对此类进行更强大更方便的封装，所以一般使用 Yii::createObject() 进行创建对象。\nFor example\nT.php \u003c?php /** * User: surprisepeas * Date: 2017/10/18 23:13 */ namespace backend\\components; class T { public $name = 'This is T name'; } Test.php \u003c?php /** * User: surprisepeas * Date: 2017/10/18 23:14 */ namespace backend\\components; class Test { public $name; private $_age; private $_t; public function __construct($age, T $t) { $this-\u003e_age = $age; $this-\u003e_t = $t; } } ExController \u003c?php /** * User: surprisepeas * Date: 2017/10/18 23:16 */ namespace console\\controllers; use yii\\console\\Controller; use Yii; class ExController extends Controller { public function actionI() { $testObject = Yii::createObject([ 'class' =\u003e 'backend\\components\\Test', 'name' =\u003e 'new test name', ],[20]); print_r($testObject); // 现在来看 common\\config\\main.php的配置,有那么点明白了吧.. $object = Yii::createObject([ 'class' =\u003e 'yii\\db\\Connection', 'dsn' =\u003e 'mysql:host=127.0.0.1;dbname=demo', 'username' =\u003e 'root', 'password' =\u003e '', 'charset' =\u003e 'utf8', ]); print_r($object); } } console执行命令 ./yii ex/i 输出结果如下：\nbackend\\components\\Test {#20 +name: \"new test name\" -_age: 20 -_t: backend\\components\\T {#26 +name: \"This is T name\" } } 具体来分析一下 Yii::createObject()\n/* * 关于$type参数,代码文档说的非常详细,大概翻译如下: * - a string: 为字符串时,表示要创建的对象的类名。 * - a configuration array:为数组时,数组内必须包含一个'class'属性，将被视为对象的类名,其余的属性名的值对将用于初始化对象相应的对象属性。 * - a PHP callable: 要么是匿名函数,要么是表示类方法的数组,调用应该返\t回正在创建的对象的一个新实例。(`[$class or $object, $method]`). * * $params参数是要创建的对象的构造函数 */ public static function createObject($type, array $params = []) { if (is_string($type)) { return static::$container-\u003eget($type, $params); } elseif (is_array($type) \u0026\u0026 isset($type['class'])) { $class = $type['class']; unset($type['class']); return static::$container-\u003eget($class, $params, $type); } elseif (is_callable($type, true)) { return static::$container-\u003einvoke($type, $params); } elseif (is_array($type)) { throw new InvalidConfigException('Object configuration must be an array containing a \"class\" element.'); } throw new InvalidConfigException('Unsupported configuration type: ' . gettype($type)); } 从上面代码可以看出，字符串类型还是数组类型的 $type 最后其实都是调用 Yii::$container-\u003eget($class) 实例化类。\n再回到上面自己写的例子(T.php Test.php)，其实就是这样：\nYii::$container-\u003eget('backend\\components\\Test', [20], ['name' =\u003e 'new test name']); 继续往下追踪，看下具体 get 到底做了什么 ：\n// 判断是否已存在 $class 的定义(单例的实现) if (isset($this-\u003e_singletons[$class])) { // singleton return $this-\u003e_singletons[$class]; // 如果 Container::_definitions 属性不存在 $class 的定义，即是否定义过以何种形式实例化 $class，哈，这正符合我们的条件，下面我们走到 Container::build 方法 } elseif (!isset($this-\u003e_definitions[$class])) { return $this-\u003ebuild($class, $params, $config); } 这个时候我们的 Test 就成为了这样：\n$this-\u003ebuild('backend\\components\\Test', [20], ['name' =\u003e 'new test name']); Container::build 方法是实例化类的方法，对于容器，我们知道，build方法要做的核心应该包括下面3点\n获取Test的依赖 解析依赖 实例化对象 我们粗略的看下build方法的实现，看下面代码的注解部分\nprotected function build($class, $params, $config) { /* @var $reflection ReflectionClass */ // 获取 $class 的依赖，返回 $class 的反射信息和依赖信息 list ($reflection, $dependencies) = $this-\u003egetDependencies($class); // 依赖信息是通过构造方法获取的，所以如果我们通过 get 方法有给构造函数传递参数，理应以我们传递的为准，即覆盖掉 getDependencies 获取的 foreach ($params as $index =\u003e $param) { $dependencies[$index] = $param; } // 解析依赖 $dependencies = $this-\u003eresolveDependencies($dependencies, $reflection); if (!$reflection-\u003eisInstantiable()) { throw new NotInstantiableException($reflection-\u003ename); } // 如果$config为空，即不需要给 $class \"注入\" 属性和属性值，直接实例化 if (empty($config)) { return $reflection-\u003enewInstanceArgs($dependencies); } // 检查 $class 是否实现了接口 yii\\base\\Configurable，我们的Test肯定是否了 if (!empty($dependencies) \u0026\u0026 $reflection-\u003eimplementsInterface('yii\\base\\Configurable')) { // set $config as the last parameter (existing one will be overwritten) $dependencies[count($dependencies) - 1] = $config; return $reflection-\u003enewInstanceArgs($dependencies); } else { // 实例化 $class，并\"注入\"属性，最后返回我们的对象 $object $object = $reflection-\u003enewInstanceArgs($dependencies); foreach ($config as $name =\u003e $value) { $object-\u003e$name = $value; } return $object; } } 整个过程我们明白了，但是 build方法内获取依赖以及解析依赖部分我们有必要看一下，因为这涉及到一个新的源码类 yii\\di\\Instance 。\n首先我们看获取类的依赖 Container::getDependencies方法，该方法的核心实现我们并不陌生。在 php之控制反转容器（Ioc Container）一文中最后实现Container容器部分的操作非常雷同。\n跟我们手动实现的Container容器相比，注意下面标记的4个地方\nprotected function getDependencies($class) { // ①、判断 Container::_reflections 属性是否有保存 $class 的反射信息，如果有就直接返回，不用再解析，毕竟获取类的反射信息也是要消耗时间 if (isset($this-\u003e_reflections[$class])) { return [$this-\u003e_reflections[$class], $this-\u003e_dependencies[$class]]; } $dependencies = []; $reflection = new ReflectionClass($class); $constructor = $reflection-\u003egetConstructor(); if ($constructor !== null) { foreach ($constructor-\u003egetParameters() as $param) { // ②、获取构造函数的参数时，通过 isDefaultValueAvailable 方法判断参数的默认值 if ($param-\u003eisDefaultValueAvailable()) { $dependencies[] = $param-\u003egetDefaultValue(); } else { $c = $param-\u003egetClass(); // ③、调用 yii\\di\\Instance::of 方法处理依赖的类名，Instance::of 方法返回 Instace 类的实例 $dependencies[] = Instance::of($c === null ? null : $c-\u003egetName()); } } } // ④、将反射信息和依赖信息分别保存在 Container::_reflections和Container::_dependencies属性，防止重复实例化该类时重复解析反射信息和依赖信息 $this-\u003e_reflections[$class] = $reflection; $this-\u003e_dependencies[$class] = $dependencies; return [$reflection, $dependencies]; } 第③点的 yii\\di\\Instance，这个类起什么作用呢？\n我们准备先说一说依赖解析方法 Container::resolveDependencies 再聊一聊这个事。\nprotected function resolveDependencies($dependencies, $reflection = null) { foreach ($dependencies as $index =\u003e $dependency) { if ($dependency instanceof Instance) { if ($dependency-\u003eid !== null) { $dependencies[$index] = $this-\u003eget($dependency-\u003eid); } elseif ($reflection !== null) { $name = $reflection-\u003egetConstructor()-\u003egetParameters()[$index]-\u003egetName(); $class = $reflection-\u003egetName(); throw new InvalidConfigException(\"Missing required parameter \\\"$name\\\" when instantiating \\\"$class\\\".\"); } } } return $dependencies; } 这个方法很简单，在该方法中，循环 $class 的依赖信息，判断每一个参数，如果是 yii\\di\\Instance的实例并且 yii\\di\\Instace::id属性非空时，再次通过 Container::get方法获取对象。\n这是什么意思？\n我们用 Test 这个例子来理一下头绪。\n首先看一下此时 Test 的依赖信息的数据结构，即 Container::resolveDependencies 方法的第一个参数， $dependencies\nArray ( [0] =\u003e 20 [1] =\u003e yii\\di\\Instance Object ( [id] =\u003e backend\\components\\T ) ) 这样就清晰多了，如此我们便不难理解 resolveDependencies 方法中再次用 $this-\u003eget($dependency-\u003eid) 的作用，实例化依赖对象嘛。\n前前后后合计着 yii\\di\\Instance 只是临时保存依赖的类名或者接口名而已，这样一来，Container::getDependencies 方法的第③点我们也就明白了。\n通常，在配置依赖注入容器时，我们可以通过 Instance 来引用类名、接口名或者别名（并非是我们上文介绍的alias别名，这里只是一个名字而已，比如\"className\"），随后会再次被 Container容器解析为实际的对象。\n比如\n$container = new \\yii\\di\\Container; $container-\u003eset('cache', [ 'class' =\u003e 'yii\\caching\\DbCache', 'db' =\u003e \\yii\\di\\Instance::of('db') ]); ",
+  "wordCount" : "939",
+  "inLanguage": "en",
+  "datePublished": "2017-09-28T23:14:08Z",
+  "dateModified": "2017-09-28T23:14:08Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://qingx2.github.io/post/yii-%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Maverick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://qingx2.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://qingx2.github.io/" accesskey="h" title="Maverick (Alt + H)">Maverick</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Yii-自动加载
+    </h1>
+    <div class="post-meta"><span title='2017-09-28 23:14:08 +0000 UTC'>September 28, 2017</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h3 id="入口脚本webindexphp">入口脚本(web/index.php)<a hidden class="anchor" aria-hidden="true" href="#入口脚本webindexphp">#</a></h3>
+<p>Yii2的<strong>advanced版本</strong>默认是有2个入口的（frontend、backend），但其实只是在使用同一个框架及公共配置让2个server分离工作进行构建网站、API等。</p>
+<p>Web服务器每将一个请求转发过来的时候，始终只会进一个入口文件，那就是<code>index.php</code>了，这个文件会进行应用的初始化配置、解析路由、处理请求、连接SQL数据库。</p>
+<p>说了这么多，来看看入口文件内容:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 定义是否处于DEBUG模式(框架初始化时 ./init 选择运行环境会影响此处代码是否会产生)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">defined</span>(<span style="color:#e6db74">&#39;YII_DEBUG&#39;</span>) <span style="color:#66d9ef">or</span> <span style="color:#a6e22e">define</span>(<span style="color:#e6db74">&#39;YII_DEBUG&#39;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">defined</span>(<span style="color:#e6db74">&#39;YII_ENV&#39;</span>) <span style="color:#66d9ef">or</span> <span style="color:#a6e22e">define</span>(<span style="color:#e6db74">&#39;YII_ENV&#39;</span>, <span style="color:#e6db74">&#39;dev&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 载入composer管理依赖包,此处实现了第三方的composer包可以直接调用(因为composer有个autoload.php文件,已经处理好载入类文件的问题)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../../vendor/autoload.php&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 载入基础类文件(核心,没有它就不能算是框架了)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../../vendor/yiisoft/yii2/Yii.php&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 载入公共的全局配置(各应用之间的目录别名就定义在此)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../../common/config/bootstrap.php&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 本server的相关全局配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../config/bootstrap.php&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 合并所有配置项参数,并调用 Application-&gt;run()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>$config <span style="color:#f92672">=</span> <span style="color:#a6e22e">yii\helpers\ArrayHelper</span><span style="color:#f92672">::</span><span style="color:#a6e22e">merge</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../../common/config/main.php&#39;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../../common/config/main-local.php&#39;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../config/main.php&#39;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/../config/main-local.php&#39;</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">yii\web\Application</span>($config))<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">run</span>();
+</span></span></code></pre></div><h3 id="核心基础类yiiphp">核心基础类(Yii.php)<a hidden class="anchor" aria-hidden="true" href="#核心基础类yiiphp">#</a></h3>
+<p>说<code>vendor/yiisoft/yii2/Yii.php</code>这个类是核心类呢，也不大准确，因为它其实只是一个子类，真正厉害的是它所继承的<code>BaseYii.php</code>，先看一下文件内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#75715e">// 此处还不能实现自动加载类,哈哈,所以只好简单粗暴require进来了,万变不离其宗
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/BaseYii.php&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Yii</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">\yii\BaseYii</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spl_autoload_register</span>([<span style="color:#e6db74">&#39;Yii&#39;</span>, <span style="color:#e6db74">&#39;autoload&#39;</span>], <span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span>$classMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">require</span>(<span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/classes.php&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span>$container <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">yii\di\Container</span>();
+</span></span></code></pre></div><blockquote>
+<p>BaseYii.php</p>
+</blockquote>
+<p><img loading="lazy" src="https://ws4.sinaimg.cn/large/006tKfTcgy1fjzp35gnakj30uy0ti7aq.jpg" alt=""  />
+</p>
+<p>下面分析一下<code>Yii.php</code>的下面三行代码:</p>
+<h4 id="1-spl_autoload_registeryii-autoload-true-true">1. spl_autoload_register([&lsquo;Yii&rsquo;, &lsquo;autoload&rsquo;], true, true);<a hidden class="anchor" aria-hidden="true" href="#1-spl_autoload_registeryii-autoload-true-true">#</a></h4>
+<p>此处将<code>yii\BaseYii::autoload</code>方法注册为自动加载方法，当new一个找不到类的时候，此autoload方法会自动被调用， PHP5.3版本后增加<a href="http://php.net/manual/zh/function.spl-autoload-register.php">spl_autoload_register</a>函数，使现在的主流框架才有了这么一套自动加载的利器。</p>
+<p>来研究一下autoload方法实现了些什么</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">autoload</span>($className)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>  		<span style="color:#75715e">// 如果 new 未找到的类是 yii2 内置的核心类，便可以快速根据类名找到其对应的路径
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>(<span style="color:#66d9ef">static</span><span style="color:#f92672">::</span>$classMap[$className])) {
+</span></span><span style="display:flex;"><span>            $classFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span>$classMap[$className];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> ($classFile[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;@&#39;</span>) {
+</span></span><span style="display:flex;"><span>                $classFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span><span style="color:#a6e22e">getAlias</span>($classFile);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">elseif</span> (<span style="color:#a6e22e">strpos</span>($className, <span style="color:#e6db74">&#39;\\&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#66d9ef">false</span>) { <span style="color:#75715e">// 自定义类自动载入前替换动作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>          	<span style="color:#75715e">// 将namespace规范的 \ 替换为 / 文件目录地址
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $classFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span><span style="color:#a6e22e">getAlias</span>(<span style="color:#e6db74">&#39;@&#39;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">str_replace</span>(<span style="color:#e6db74">&#39;\\&#39;</span>, <span style="color:#e6db74">&#39;/&#39;</span>, $className) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;.php&#39;</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> ($classFile <span style="color:#f92672">===</span> <span style="color:#66d9ef">false</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">is_file</span>($classFile)) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">include</span>($classFile);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">YII_DEBUG</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">class_exists</span>($className, <span style="color:#66d9ef">false</span>) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">interface_exists</span>($className, <span style="color:#66d9ef">false</span>) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">trait_exists</span>($className, <span style="color:#66d9ef">false</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">UnknownClassException</span>(<span style="color:#e6db74">&#34;Unable to find &#39;</span><span style="color:#e6db74">$className</span><span style="color:#e6db74">&#39; in file: </span><span style="color:#e6db74">$classFile</span><span style="color:#e6db74">. Namespace missing?&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>此处自定义类的自动载入涉及到一个别名的概念:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$classFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span><span style="color:#a6e22e">getAlias</span>(<span style="color:#e6db74">&#39;@&#39;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">str_replace</span>(<span style="color:#e6db74">&#39;\\&#39;</span>, <span style="color:#e6db74">&#39;/&#39;</span>, $className) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;.php&#39;</span>, <span style="color:#66d9ef">false</span>);
+</span></span></code></pre></div><p><code>BaseYii</code>文件有个专门存储别名的属性<code>public static $aliases = ['@yii' =&gt; __DIR__];</code> 回过头看入口文件处引入的<code>require(__DIR__ . '/../../common/config/bootstrap.php');</code>，调用<code>BaseYii</code>内的<code>setAlias()</code>方法将server根目录存入<code>$aliases</code>属性:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">setAlias</span>(<span style="color:#e6db74">&#39;@common&#39;</span>, <span style="color:#a6e22e">dirname</span>(<span style="color:#66d9ef">__DIR__</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">setAlias</span>(<span style="color:#e6db74">&#39;@frontend&#39;</span>, <span style="color:#a6e22e">dirname</span>(<span style="color:#a6e22e">dirname</span>(<span style="color:#66d9ef">__DIR__</span>)) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/frontend&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">setAlias</span>(<span style="color:#e6db74">&#39;@backend&#39;</span>, <span style="color:#a6e22e">dirname</span>(<span style="color:#a6e22e">dirname</span>(<span style="color:#66d9ef">__DIR__</span>)) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/backend&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">setAlias</span>(<span style="color:#e6db74">&#39;@console&#39;</span>, <span style="color:#a6e22e">dirname</span>(<span style="color:#a6e22e">dirname</span>(<span style="color:#66d9ef">__DIR__</span>)) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/console&#39;</span>);
+</span></span></code></pre></div><p>那么<code>frontend\models\User</code>通过转换后就会去获得 <code>frontend</code>项目下的User文件文件路径，第二个参数决定如果没有找到这个文件是否抛出异常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$classFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span><span style="color:#a6e22e">getAlias</span>(<span style="color:#e6db74">&#39;@frontend/models/User.php&#39;</span>, <span style="color:#66d9ef">false</span>);
+</span></span></code></pre></div><h4 id="2-yiiclassmap--require__dir__--classesphp">2. Yii::$classMap = require(<strong>DIR</strong> . &lsquo;/classes.php&rsquo;);<a hidden class="anchor" aria-hidden="true" href="#2-yiiclassmap--require__dir__--classesphp">#</a></h4>
+<p>这个目录就很直接了，保存的是框架的核心基础类对应的类文件路径</p>
+<p>此处的常量<code>YII2_PATH</code>已在<code>BaseYii</code>中进行了定义<code>defined('YII2_PATH') or define('YII2_PATH', __DIR__);</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> [
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\Action&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/Action.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\ActionEvent&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/ActionEvent.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\ActionFilter&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/ActionFilter.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\Application&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/Application.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\ArrayAccessTrait&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/ArrayAccessTrait.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\Arrayable&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/Arrayable.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\ArrayableTrait&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/ArrayableTrait.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\Behavior&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/Behavior.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\BootstrapInterface&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/BootstrapInterface.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;yii\base\Component&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">YII2_PATH</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/base/Component.php&#39;</span>,
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// .......
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>];
+</span></span></code></pre></div><h4 id="3-yiicontainer--new-yiidicontainer">3. Yii::$container = new yii\di\Container();<a hidden class="anchor" aria-hidden="true" href="#3-yiicontainer--new-yiidicontainer">#</a></h4>
+<p>这一步的操作是将实例化依赖注入容器，并赋值给 <code>3. Yii::$container</code> ，Yii内部核心对此类使用非常普遍，占有很高的地位！由 <code>Yii</code> 继承 <code>BaseYii::createObject</code> 里对此类进行更强大更方便的封装，所以一般使用 <code>Yii::createObject()</code> 进行创建对象。</p>
+<blockquote>
+<p>For example</p>
+</blockquote>
+<ol>
+<li>T.php</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * User: surprisepeas
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * Date: 2017/10/18 23:13
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">backend\components</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;This is T name&#39;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>Test.php</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * User: surprisepeas
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * Date: 2017/10/18 23:14
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">backend\components</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $name;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> $_age;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> $_t;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct($age, <span style="color:#a6e22e">T</span> $t)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_age</span> <span style="color:#f92672">=</span> $age;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_t</span> <span style="color:#f92672">=</span> $t;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="3">
+<li>ExController</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * User: surprisepeas
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> * Date: 2017/10/18 23:16
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">console\controllers</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">yii\console\Controller</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Yii</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ExController</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Controller</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">actionI</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $testObject <span style="color:#f92672">=</span> <span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">createObject</span>([
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;class&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;backend\components\Test&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;name&#39;</span>  <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;new test name&#39;</span>,
+</span></span><span style="display:flex;"><span>        ],[<span style="color:#ae81ff">20</span>]);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">print_r</span>($testObject);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      	<span style="color:#75715e">// 现在来看 common\config\main.php的配置,有那么点明白了吧..
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        $object <span style="color:#f92672">=</span> <span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span><span style="color:#a6e22e">createObject</span>([
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;class&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;yii\db\Connection&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;dsn&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;mysql:host=127.0.0.1;dbname=demo&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;username&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;root&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;password&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;charset&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;utf8&#39;</span>,
+</span></span><span style="display:flex;"><span>        ]);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">print_r</span>($object);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>console执行命令 <code>./yii ex/i</code> 输出结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>backend<span style="color:#ae81ff">\c</span>omponents<span style="color:#ae81ff">\T</span>est <span style="color:#f92672">{</span><span style="color:#75715e">#20</span>
+</span></span><span style="display:flex;"><span>  +name: <span style="color:#e6db74">&#34;new test name&#34;</span>
+</span></span><span style="display:flex;"><span>  -_age: <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>  -_t: backend<span style="color:#ae81ff">\c</span>omponents<span style="color:#ae81ff">\T</span> <span style="color:#f92672">{</span><span style="color:#75715e">#26</span>
+</span></span><span style="display:flex;"><span>    +name: <span style="color:#e6db74">&#34;This is T name&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>具体来分析一下 <code>Yii::createObject()</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 关于$type参数,代码文档说的非常详细,大概翻译如下:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * - a string: 为字符串时,表示要创建的对象的类名。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * - a configuration array:为数组时,数组内必须包含一个&#39;class&#39;属性，将被视为对象的类名,其余的属性名的值对将用于初始化对象相应的对象属性。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * - a PHP callable: 要么是匿名函数,要么是表示类方法的数组,调用应该返		回正在创建的对象的一个新实例。(`[$class or $object, $method]`).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * $params参数是要创建的对象的构造函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createObject</span>($type, <span style="color:#66d9ef">array</span> $params <span style="color:#f92672">=</span> [])
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">is_string</span>($type)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span>$container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">get</span>($type, $params);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">elseif</span> (<span style="color:#a6e22e">is_array</span>($type) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">isset</span>($type[<span style="color:#e6db74">&#39;class&#39;</span>])) {
+</span></span><span style="display:flex;"><span>            $class <span style="color:#f92672">=</span> $type[<span style="color:#e6db74">&#39;class&#39;</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">unset</span>($type[<span style="color:#e6db74">&#39;class&#39;</span>]);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span>$container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">get</span>($class, $params, $type);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">elseif</span> (<span style="color:#a6e22e">is_callable</span>($type, <span style="color:#66d9ef">true</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span>$container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">invoke</span>($type, $params);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">elseif</span> (<span style="color:#a6e22e">is_array</span>($type)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">InvalidConfigException</span>(<span style="color:#e6db74">&#39;Object configuration must be an array containing a &#34;class&#34; element.&#39;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">InvalidConfigException</span>(<span style="color:#e6db74">&#39;Unsupported configuration type: &#39;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">gettype</span>($type));
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>从上面代码可以看出，字符串类型还是数组类型的 <code>$type</code> 最后其实都是调用 <code>Yii::$container-&gt;get($class)</code> 实例化类。</p>
+<p>再回到上面自己写的例子(T.php Test.php)，其实就是这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">Yii</span><span style="color:#f92672">::</span>$container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;backend\components\Test&#39;</span>, [<span style="color:#ae81ff">20</span>], [<span style="color:#e6db74">&#39;name&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;new test name&#39;</span>]);
+</span></span></code></pre></div><p>继续往下追踪，看下具体 <code>get</code> 到底做了什么 ：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#75715e">// 判断是否已存在 $class 的定义(单例的实现)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_singletons</span>[$class])) {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// singleton
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_singletons</span>[$class];
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 如果 Container::_definitions 属性不存在 $class 的定义，即是否定义过以何种形式实例化 $class，哈，这正符合我们的条件，下面我们走到 Container::build 方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">elseif</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_definitions</span>[$class])) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">build</span>($class, $params, $config);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这个时候我们的 <code>Test</code> 就成为了这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">build</span>(<span style="color:#e6db74">&#39;backend\components\Test&#39;</span>, [<span style="color:#ae81ff">20</span>], [<span style="color:#e6db74">&#39;name&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;new test name&#39;</span>]);
+</span></span></code></pre></div><p>Container::build 方法是实例化类的方法，对于容器，我们知道，build方法要做的核心应该包括下面3点</p>
+<ol>
+<li>获取Test的依赖</li>
+<li>解析依赖</li>
+<li>实例化对象</li>
+</ol>
+<p>我们粗略的看下build方法的实现，看下面代码的注解部分</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">build</span>($class, $params, $config)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* @var $reflection ReflectionClass */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 获取 $class 的依赖，返回 $class 的反射信息和依赖信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">list</span> ($reflection, $dependencies) <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getDependencies</span>($class);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 依赖信息是通过构造方法获取的，所以如果我们通过 get 方法有给构造函数传递参数，理应以我们传递的为准，即覆盖掉 getDependencies 获取的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">foreach</span> ($params <span style="color:#66d9ef">as</span> $index <span style="color:#f92672">=&gt;</span> $param) {
+</span></span><span style="display:flex;"><span>        $dependencies[$index] <span style="color:#f92672">=</span> $param;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 解析依赖
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    $dependencies <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">resolveDependencies</span>($dependencies, $reflection);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>$reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">isInstantiable</span>()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">NotInstantiableException</span>($reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">name</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 如果$config为空，即不需要给 $class &#34;注入&#34; 属性和属性值，直接实例化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">empty</span>($config)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">newInstanceArgs</span>($dependencies);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 检查 $class 是否实现了接口 yii\base\Configurable，我们的Test肯定是否了
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">empty</span>($dependencies) <span style="color:#f92672">&amp;&amp;</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">implementsInterface</span>(<span style="color:#e6db74">&#39;yii\base\Configurable&#39;</span>)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// set $config as the last parameter (existing one will be overwritten)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        $dependencies[<span style="color:#a6e22e">count</span>($dependencies) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> $config;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">newInstanceArgs</span>($dependencies);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 实例化 $class，并&#34;注入&#34;属性，最后返回我们的对象 $object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        $object <span style="color:#f92672">=</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">newInstanceArgs</span>($dependencies);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> ($config <span style="color:#66d9ef">as</span> $name <span style="color:#f92672">=&gt;</span> $value) {
+</span></span><span style="display:flex;"><span>            $object<span style="color:#f92672">-&gt;</span>$name <span style="color:#f92672">=</span> $value;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $object;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>整个过程我们明白了，但是 build方法内获取依赖以及解析依赖部分我们有必要看一下，因为这涉及到一个新的源码类 yii\di\Instance 。</p>
+<p>首先我们看获取类的依赖 Container::getDependencies方法，该方法的核心实现我们并不陌生。在 <a href="http://xn--zwtw53i.com/2017/09/15/PHP%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95%E3%80%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E3%80%81%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC/">php之控制反转容器（Ioc Container）</a>一文中最后实现Container容器部分的操作非常雷同。</p>
+<p>跟我们手动实现的Container容器相比，注意下面标记的4个地方</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getDependencies</span>($class)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ①、判断 Container::_reflections 属性是否有保存 $class 的反射信息，如果有就直接返回，不用再解析，毕竟获取类的反射信息也是要消耗时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_reflections</span>[$class])) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [$this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_reflections</span>[$class], $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_dependencies</span>[$class]];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    $dependencies <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>    $reflection <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ReflectionClass</span>($class);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    $constructor <span style="color:#f92672">=</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getConstructor</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ($constructor <span style="color:#f92672">!==</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> ($constructor<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getParameters</span>() <span style="color:#66d9ef">as</span> $param) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// ②、获取构造函数的参数时，通过 isDefaultValueAvailable 方法判断参数的默认值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> ($param<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">isDefaultValueAvailable</span>()) {
+</span></span><span style="display:flex;"><span>                $dependencies[] <span style="color:#f92672">=</span> $param<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getDefaultValue</span>();
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                $c <span style="color:#f92672">=</span> $param<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getClass</span>();
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// ③、调用 yii\di\Instance::of 方法处理依赖的类名，Instance::of 方法返回 Instace 类的实例
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                $dependencies[] <span style="color:#f92672">=</span> <span style="color:#a6e22e">Instance</span><span style="color:#f92672">::</span><span style="color:#a6e22e">of</span>($c <span style="color:#f92672">===</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">:</span> $c<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getName</span>());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ④、将反射信息和依赖信息分别保存在 Container::_reflections和Container::_dependencies属性，防止重复实例化该类时重复解析反射信息和依赖信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_reflections</span>[$class] <span style="color:#f92672">=</span> $reflection;
+</span></span><span style="display:flex;"><span>    $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">_dependencies</span>[$class] <span style="color:#f92672">=</span> $dependencies;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [$reflection, $dependencies];
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>第③点的 yii\di\Instance，这个类起什么作用呢？</p>
+<p>我们准备先说一说依赖解析方法 Container::resolveDependencies 再聊一聊这个事。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">resolveDependencies</span>($dependencies, $reflection <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">foreach</span> ($dependencies <span style="color:#66d9ef">as</span> $index <span style="color:#f92672">=&gt;</span> $dependency) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ($dependency <span style="color:#a6e22e">instanceof</span> <span style="color:#a6e22e">Instance</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> ($dependency<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">id</span> <span style="color:#f92672">!==</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>                $dependencies[$index] <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">get</span>($dependency<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">id</span>);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">elseif</span> ($reflection <span style="color:#f92672">!==</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>                $name <span style="color:#f92672">=</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getConstructor</span>()<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getParameters</span>()[$index]<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getName</span>();
+</span></span><span style="display:flex;"><span>                $class <span style="color:#f92672">=</span> $reflection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getName</span>();
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">InvalidConfigException</span>(<span style="color:#e6db74">&#34;Missing required parameter </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">$name\</span><span style="color:#e6db74">&#34;</span> <span style="color:#a6e22e">when</span> <span style="color:#a6e22e">instantiating</span> <span style="color:#a6e22e">\</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">$class\</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span><span style="color:#e6db74">&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    return </span><span style="color:#e6db74">$dependencies</span><span style="color:#e6db74">;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span></code></pre></div><p>这个方法很简单，在该方法中，循环 $class 的依赖信息，判断每一个参数，如果是 yii\di\Instance的实例并且 yii\di\Instace::id属性非空时，再次通过 Container::get方法获取对象。</p>
+<p>这是什么意思？</p>
+<p>我们用 Test 这个例子来理一下头绪。</p>
+<p>首先看一下此时 Test 的依赖信息的数据结构，即 Container::resolveDependencies 方法的第一个参数， $dependencies</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">Array</span>
+</span></span><span style="display:flex;"><span>(
+</span></span><span style="display:flex;"><span>    [<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>    [<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">yii\di\Instance</span> <span style="color:#a6e22e">Object</span>
+</span></span><span style="display:flex;"><span>        (
+</span></span><span style="display:flex;"><span>            [<span style="color:#a6e22e">id</span>] <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">backend\components\T</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>这样就清晰多了，如此我们便不难理解 resolveDependencies 方法中再次用 $this-&gt;get($dependency-&gt;id) 的作用，实例化依赖对象嘛。</p>
+<p>前前后后合计着 yii\di\Instance 只是临时保存依赖的类名或者接口名而已，这样一来，Container::getDependencies 方法的第③点我们也就明白了。</p>
+<p>通常，在配置依赖注入容器时，我们可以通过 Instance 来引用类名、接口名或者别名（并非是我们上文介绍的alias别名，这里只是一个名字而已，比如&quot;className&quot;），随后会再次被 Container容器解析为实际的对象。</p>
+<p>比如</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$container <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">\yii\di\Container</span>;
+</span></span><span style="display:flex;"><span>$container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">set</span>(<span style="color:#e6db74">&#39;cache&#39;</span>, [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;class&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;yii\caching\DbCache&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;db&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">\yii\di\Instance</span><span style="color:#f92672">::</span><span style="color:#a6e22e">of</span>(<span style="color:#e6db74">&#39;db&#39;</span>)
+</span></span><span style="display:flex;"><span>]);
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://qingx2.github.io/">Maverick</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

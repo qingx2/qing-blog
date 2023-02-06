@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Nginx简易教程 | Maverick</title>
+<meta name="keywords" content="Nginx">
+<meta name="description" content="
+欢迎 Star 原作者 dunwu GitHub
+
+概述
+什么是 Nginx?
+Nginx (engine x) 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。
+
+
+什么是反向代理？
+反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。">
+<meta name="author" content="静默虚空 dunwu">
+<link rel="canonical" href="https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.bccfefac377bc340f06c260aed1bddf49a4354816d7c570d6aac75a997986c95.css" integrity="sha256-vM/vrDd7w0DwbCYK7Rvd9JpDVIFtfFcNaqx1qZeYbJU=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://qingx2.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://qingx2.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://qingx2.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://qingx2.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://qingx2.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Nginx简易教程" />
+<meta property="og:description" content="
+欢迎 Star 原作者 dunwu GitHub
+
+概述
+什么是 Nginx?
+Nginx (engine x) 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。
+
+
+什么是反向代理？
+反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2018-08-05T11:08:21+08:00" />
+<meta property="article:modified_time" content="2018-08-05T11:08:21+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Nginx简易教程"/>
+<meta name="twitter:description" content="
+欢迎 Star 原作者 dunwu GitHub
+
+概述
+什么是 Nginx?
+Nginx (engine x) 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。
+
+
+什么是反向代理？
+反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://qingx2.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Nginx简易教程",
+      "item": "https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Nginx简易教程",
+  "name": "Nginx简易教程",
+  "description": " 欢迎 Star 原作者 dunwu GitHub\n概述 什么是 Nginx?\nNginx (engine x) 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。\n什么是反向代理？\n反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。\n",
+  "keywords": [
+    "Nginx"
+  ],
+  "articleBody": " 欢迎 Star 原作者 dunwu GitHub\n概述 什么是 Nginx?\nNginx (engine x) 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。\n什么是反向代理？\n反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。\n安装与使用 安装 nginx 官网下载地址\n发布版本分为 Linux 和 windows 版本。\n也可以下载源码，编译后运行。\n从源代码编译 Nginx 把源码解压缩之后，在终端里运行如下命令：\n$ ./configure $ make $ sudo make install 默认情况下，Nginx 会被安装在 /usr/local/nginx。通过设定编译选项，你可以改变这个设定。\nWindows 安装 为了安装 Nginx / Win32，需先下载它。然后解压之，然后运行即可。下面以 C 盘根目录为例说明下：\ncd C: cd C:\\nginx-0.8.54 start nginx Nginx / Win32 是运行在一个控制台程序，而非 windows 服务方式的。服务器方式目前还是开发尝试中。\n使用 nginx 的使用比较简单，就是几条命令。\n常用到的命令如下：\nnginx -s stop 快速关闭Nginx，可能不保存相关信息，并迅速终止web服务。 nginx -s quit 平稳关闭Nginx，保存相关信息，有安排的结束web服务。 nginx -s reload 因改变了Nginx相关配置，需要重新加载配置而重载。 nginx -s reopen 重新打开日志文件。 nginx -c filename 为 Nginx 指定一个配置文件，来代替缺省的。 nginx -t 不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。 nginx -v 显示 nginx 的版本。 nginx -V 显示 nginx 的版本，编译器版本和配置参数。 如果不想每次都敲命令，可以在 nginx 安装目录下新添一个启动批处理文件startup.bat，双击即可运行。内容如下：\n@echo off rem 如果启动前已经启动nginx并记录下pid文件，会kill指定进程 nginx.exe -s stop rem 测试配置文件语法正确性 nginx.exe -t -c conf/nginx.conf rem 显示版本信息 nginx.exe -v rem 按照指定配置去启动nginx nginx.exe -c conf/nginx.conf 如果是运行在 Linux 下，写一个 shell 脚本，大同小异。\nnginx 配置实战 我始终认为，各种开发工具的配置还是结合实战来讲述，会让人更易理解。\nhttp 反向代理配置 我们先实现一个小目标：不考虑复杂的配置，仅仅是完成一个 http 反向代理。\nnginx.conf 配置文件如下： 注：conf / nginx.conf 是 nginx 的默认配置文件。你也可以使用 nginx -c 指定你的配置文件\n#运行用户 #user somebody; #启动进程,通常设置成和cpu的数量相等 worker_processes 1; #全局错误日志 error_log D:/Tools/nginx-1.10.1/logs/error.log; error_log D:/Tools/nginx-1.10.1/logs/notice.log notice; error_log D:/Tools/nginx-1.10.1/logs/info.log info; #PID文件，记录当前启动的nginx的进程ID pid D:/Tools/nginx-1.10.1/logs/nginx.pid; #工作模式及连接数上限 events { worker_connections 1024; #单个后台worker process进程的最大并发链接数 } #设定http服务器，利用它的反向代理功能提供负载均衡支持 http { #设定mime类型(邮件支持类型),类型由mime.types文件定义 include D:/Tools/nginx-1.10.1/conf/mime.types; default_type application/octet-stream; #设定日志 log_format main '[$remote_addr] - [$remote_user] [$time_local] \"$request\" ' '$status $body_bytes_sent \"$http_referer\" ' '\"$http_user_agent\" \"$http_x_forwarded_for\"'; access_log D:/Tools/nginx-1.10.1/logs/access.log main; rewrite_log on; #sendfile 指令指定 nginx 是否调用 sendfile 函数（zero copy 方式）来输出文件，对于普通应用， #必须设为 on,如果用来进行下载等应用磁盘IO重负载应用，可设置为 off，以平衡磁盘与网络I/O处理速度，降低系统的uptime. sendfile on; #tcp_nopush on; #连接超时时间 keepalive_timeout 120; tcp_nodelay on; #gzip压缩开关 #gzip on; #设定实际的服务器列表 upstream zp_server1{ server 127.0.0.1:8089; } #HTTP服务器 server { #监听80端口，80端口是知名端口号，用于HTTP协议 listen 80; #定义使用www.xx.com访问 server_name www.helloworld.com; #首页 index index.html #指向webapp的目录 root D:\\01_Workspace\\Project\\github\\zp\\SpringNotes\\spring-security\\spring-shiro\\src\\main\\webapp; #编码格式 charset utf-8; #代理配置参数 proxy_connect_timeout 180; proxy_send_timeout 180; proxy_read_timeout 180; proxy_set_header Host $host; proxy_set_header X-Forwarder-For $remote_addr; #反向代理的路径（和upstream绑定），location 后面设置映射的路径 location / { proxy_pass http://zp_server1; } #静态文件，nginx自己处理 location ~ ^/(images|javascript|js|css|flash|media|static)/ { root D:\\01_Workspace\\Project\\github\\zp\\SpringNotes\\spring-security\\spring-shiro\\src\\main\\webapp\\views; #过期30天，静态文件不怎么更新，过期可以设大一点，如果频繁更新，则可以设置得小一点。 expires 30d; } #设定查看Nginx状态的地址 location /NginxStatus { stub_status on; access_log on; auth_basic \"NginxStatus\"; auth_basic_user_file conf/htpasswd; } #禁止访问 .htxxx 文件 location ~ /\\.ht { deny all; } #错误处理页面（可选择性配置） #error_page 404 /404.html; #error_page 500 502 503 504 /50x.html; #location = /50x.html { # root html; #} } } 好了，让我们来试试吧：\n启动 webapp，注意启动绑定的端口要和 nginx 中的 upstream 设置的端口保持一致。 更改 host：在 C:\\Windows\\System32\\drivers\\etc 目录下的 host 文件中添加一条 DNS 记录 127.0.0.1 www.helloworld.com 启动前文中 startup.bat 的命令 在浏览器中访问 www.helloworld.com，不出意外，已经可以访问了。 负载均衡配置 上一个例子中，代理仅仅指向一个服务器。\n但是，网站在实际运营过程中，多半都是有多台服务器运行着同样的 app，这时需要使用负载均衡来分流。\nnginx 也可以实现简单的负载均衡功能。\n假设这样一个应用场景：将应用部署在 192.168.1.11:80、192.168.1.12:80、192.168.1.13:80 三台 linux 环境的服务器上。网站域名叫 www.helloworld.com，公网 IP 为 192.168.1.11。在公网 IP 所在的服务器上部署 nginx，对所有请求做负载均衡处理。\nnginx.conf 配置如下：\nhttp { #设定mime类型,类型由mime.type文件定义 include /etc/nginx/mime.types; default_type application/octet-stream; #设定日志格式 access_log /var/log/nginx/access.log; #设定负载均衡的服务器列表 upstream load_balance_server { #weigth参数表示权值，权值越高被分配到的几率越大 server 192.168.1.11:80 weight=5; server 192.168.1.12:80 weight=1; server 192.168.1.13:80 weight=6; } #HTTP服务器 server { #侦听80端口 listen 80; #定义使用www.xx.com访问 server_name www.helloworld.com; #对所有请求进行负载均衡请求 location / { root /root; #定义服务器的默认网站根目录位置 index index.html index.htm; #定义首页索引文件的名称 proxy_pass http://load_balance_server ;#请求转向load_balance_server 定义的服务器列表 #以下是一些反向代理的配置(可选择性配置) #proxy_redirect off; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; #后端的Web服务器可以通过X-Forwarded-For获取用户真实IP proxy_set_header X-Forwarded-For $remote_addr; proxy_connect_timeout 90; #nginx跟后端服务器连接超时时间(代理连接超时) proxy_send_timeout 90; #后端服务器数据回传时间(代理发送超时) proxy_read_timeout 90; #连接成功后，后端服务器响应时间(代理接收超时) proxy_buffer_size 4k; #设置代理服务器（nginx）保存用户头信息的缓冲区大小 proxy_buffers 4 32k; #proxy_buffers缓冲区，网页平均在32k以下的话，这样设置 proxy_busy_buffers_size 64k; #高负荷下缓冲大小（proxy_buffers*2） proxy_temp_file_write_size 64k; #设定缓存文件夹大小，大于这个值，将从upstream服务器传 client_max_body_size 10m; #允许客户端请求的最大单文件字节数 client_body_buffer_size 128k; #缓冲区代理缓冲用户端请求的最大字节数 } } } 网站有多个 webapp 的配置 当一个网站功能越来越丰富时，往往需要将一些功能相对独立的模块剥离出来，独立维护。这样的话，通常，会有多个 webapp。\n举个例子：假如 www.helloworld.com 站点有好几个 webapp，finance（金融）、product（产品）、admin（用户中心）。访问这些应用的方式通过上下文(context)来进行区分:\nwww.helloworld.com/finance/\nwww.helloworld.com/product/\nwww.helloworld.com/admin/\n我们知道，http 的默认端口号是 80，如果在一台服务器上同时启动这 3 个 webapp 应用，都用 80 端口，肯定是不成的。所以，这三个应用需要分别绑定不同的端口号。\n那么，问题来了，用户在实际访问 www.helloworld.com 站点时，访问不同 webapp，总不会还带着对应的端口号去访问吧。所以，你再次需要用到反向代理来做处理。\n配置也不难，来看看怎么做吧：\nhttp { #此处省略一些基本配置 upstream product_server{ server www.helloworld.com:8081; } upstream admin_server{ server www.helloworld.com:8082; } upstream finance_server{ server www.helloworld.com:8083; } server { #此处省略一些基本配置 #默认指向product的server location / { proxy_pass http://product_server; } location /product/{ proxy_pass http://product_server; } location /admin/ { proxy_pass http://admin_server; } location /finance/ { proxy_pass http://finance_server; } } } https 反向代理配置 一些对安全性要求比较高的站点，可能会使用 HTTPS（一种使用 ssl 通信标准的安全 HTTP 协议）。\n这里不科普 HTTP 协议和 SSL 标准。但是，使用 nginx 配置 https 需要知道几点：\nHTTPS 的固定端口号是 443，不同于 HTTP 的 80 端口 SSL 标准需要引入安全证书，所以在 nginx.conf 中你需要指定证书和它对应的 key 其他和 http 反向代理基本一样，只是在 Server 部分配置有些不同。\n#HTTP服务器 server { #监听443端口。443为知名端口号，主要用于HTTPS协议 listen 443 ssl; #定义使用www.xx.com访问 server_name www.helloworld.com; #ssl证书文件位置(常见证书文件格式为：crt/pem) ssl_certificate cert.pem; #ssl证书key位置 ssl_certificate_key cert.key; #ssl配置参数（选择性配置） ssl_session_cache shared:SSL:1m; ssl_session_timeout 5m; #数字签名，此处使用MD5 ssl_ciphers HIGH:!aNULL:!MD5; ssl_prefer_server_ciphers on; location / { root /root; index index.html index.htm; } } 静态站点配置 有时候，我们需要配置静态站点(即 html 文件和一堆静态资源)。\n举例来说：如果所有的静态资源都放在了 /app/dist 目录下，我们只需要在 nginx.conf 中指定首页以及这个站点的 host 即可。\n配置如下：\nworker_processes 1; events { worker_connections 1024; } http { include mime.types; default_type application/octet-stream; sendfile on; keepalive_timeout 65; gzip on; gzip_types text/plain application/x-javascript text/css application/xml text/javascript application/javascript image/jpeg image/gif image/png; gzip_vary on; server { listen 80; server_name static.zp.cn; location / { root /app/dist; index index.html; #转发任何请求到 index.html } } } 然后，添加 HOST：\n127.0.0.1 static.zp.cn\n此时，在本地浏览器访问 static.zp.cn ，就可以访问静态站点了。\n跨域解决方案 web 领域开发中，经常采用前后端分离模式。这种模式下，前端和后端分别是独立的 web 应用程序，例如：后端是 Java 程序，前端是 React 或 Vue 应用。\n各自独立的 web app 在互相访问时，势必存在跨域问题。解决跨域问题一般有两种思路：\nCORS\n在后端服务器设置 HTTP 响应头，把你需要运行访问的域名加入加入 Access-Control-Allow-Origin 中。\njsonp\n把后端根据请求，构造 json 数据，并返回，前端用 jsonp 跨域。\n以上这两种思路，本文不展开讨论。\n需要说明的是，nginx 根据第一种思路，也提供了一种解决跨域的解决方案。\n举例：www.helloworld.com 网站是由一个前端 app ，一个后端 app 组成的。前端端口号为 9000， 后端端口号为 8080。\n前端和后端如果使用 http 进行交互时，请求会被拒绝，因为存在跨域问题。来看看，nginx 是怎么解决的吧：\n首先，在 enable-cors.conf 文件中设置 cors ：\n# allow origin list set $ACAO '*'; # set single origin if ($http_origin ~* (www.helloworld.com)$) { set $ACAO $http_origin; } if ($cors = \"trueget\") { add_header 'Access-Control-Allow-Origin' \"$http_origin\"; add_header 'Access-Control-Allow-Credentials' 'true'; add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS'; add_header 'Access-Control-Allow-Headers' 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type'; } if ($request_method = 'OPTIONS') { set $cors \"${cors}options\"; } if ($request_method = 'GET') { set $cors \"${cors}get\"; } if ($request_method = 'POST') { set $cors \"${cors}post\"; } 接下来，在你的服务器中 include enable-cors.conf 来引入跨域配置：\n# ---------------------------------------------------- # 此文件为项目 nginx 配置片段 # 可以直接在 nginx config 中 include（推荐） # 或者 copy 到现有 nginx 中，自行配置 # www.helloworld.com 域名需配合 dns hosts 进行配置 # 其中，api 开启了 cors，需配合本目录下另一份配置文件 # ---------------------------------------------------- upstream front_server{ server www.helloworld.com:9000; } upstream api_server{ server www.helloworld.com:8080; } server { listen 80; server_name www.helloworld.com; location ~ ^/api/ { include enable-cors.conf; proxy_pass http://api_server; rewrite \"^/api/(.*)$\" /$1 break; } location ~ ^/ { proxy_pass http://front_server; } } 到此，就完成了。\n参考 Nginx 的中文维基\n",
+  "wordCount" : "867",
+  "inLanguage": "en",
+  "datePublished": "2018-08-05T11:08:21+08:00",
+  "dateModified": "2018-08-05T11:08:21+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "静默虚空 dunwu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Maverick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://qingx2.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://qingx2.github.io/" accesskey="h" title="Maverick (Alt + H)">Maverick</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Nginx简易教程
+    </h1>
+    <div class="post-meta"><span title='2018-08-05 11:08:21 +0800 CST'>August 5, 2018</span>&nbsp;·&nbsp;静默虚空 dunwu
+
+</div>
+  </header> 
+  <div class="post-content"><blockquote>
+<p>欢迎 Star 原作者 <a href="https://github.com/dunwu/Nginx">dunwu GitHub</a></p>
+</blockquote>
+<h2 id="概述">概述<a hidden class="anchor" aria-hidden="true" href="#概述">#</a></h2>
+<p><strong>什么是 Nginx?</strong></p>
+<p><strong>Nginx (engine x)</strong> 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。</p>
+<p><img loading="lazy" src="https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/nginx/nginx.jpg" alt=""  />
+</p>
+<p><strong>什么是反向代理？</strong></p>
+<p>反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</p>
+<h2 id="安装与使用">安装与使用<a hidden class="anchor" aria-hidden="true" href="#安装与使用">#</a></h2>
+<h3 id="安装">安装<a hidden class="anchor" aria-hidden="true" href="#安装">#</a></h3>
+<p><a href="http://nginx.org/">nginx 官网下载地址</a></p>
+<p>发布版本分为 Linux 和 windows 版本。</p>
+<p>也可以下载源码，编译后运行。</p>
+<h4 id="从源代码编译-nginx">从源代码编译 Nginx<a hidden class="anchor" aria-hidden="true" href="#从源代码编译-nginx">#</a></h4>
+<p>把源码解压缩之后，在终端里运行如下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ ./configure
+</span></span><span style="display:flex;"><span>$ make
+</span></span><span style="display:flex;"><span>$ sudo make install
+</span></span></code></pre></div><p>默认情况下，Nginx 会被安装在 <code>/usr/local/nginx</code>。通过设定<a href="http://tool.oschina.net/uploads/apidocs/nginx-zh/NginxChsInstallOptions.htm">编译选项</a>，你可以改变这个设定。</p>
+<h4 id="windows-安装">Windows 安装<a hidden class="anchor" aria-hidden="true" href="#windows-安装">#</a></h4>
+<p>为了安装 Nginx / Win32，需先下载它。然后解压之，然后运行即可。下面以 C 盘根目录为例说明下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd C:
+</span></span><span style="display:flex;"><span>cd C:<span style="color:#ae81ff">\n</span>ginx-0.8.54   start nginx
+</span></span></code></pre></div><p>Nginx / Win32 是运行在一个控制台程序，而非 windows 服务方式的。服务器方式目前还是开发尝试中。</p>
+<h3 id="使用">使用<a hidden class="anchor" aria-hidden="true" href="#使用">#</a></h3>
+<p>nginx 的使用比较简单，就是几条命令。</p>
+<p>常用到的命令如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nginx -s stop       快速关闭Nginx，可能不保存相关信息，并迅速终止web服务。
+</span></span><span style="display:flex;"><span>nginx -s quit       平稳关闭Nginx，保存相关信息，有安排的结束web服务。
+</span></span><span style="display:flex;"><span>nginx -s reload     因改变了Nginx相关配置，需要重新加载配置而重载。
+</span></span><span style="display:flex;"><span>nginx -s reopen     重新打开日志文件。
+</span></span><span style="display:flex;"><span>nginx -c filename   为 Nginx 指定一个配置文件，来代替缺省的。
+</span></span><span style="display:flex;"><span>nginx -t            不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。
+</span></span><span style="display:flex;"><span>nginx -v            显示 nginx 的版本。
+</span></span><span style="display:flex;"><span>nginx -V            显示 nginx 的版本，编译器版本和配置参数。
+</span></span></code></pre></div><p>如果不想每次都敲命令，可以在 nginx 安装目录下新添一个启动批处理文件<strong>startup.bat</strong>，双击即可运行。内容如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>@echo off
+</span></span><span style="display:flex;"><span>rem 如果启动前已经启动nginx并记录下pid文件，会kill指定进程
+</span></span><span style="display:flex;"><span>nginx.exe -s stop
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rem 测试配置文件语法正确性
+</span></span><span style="display:flex;"><span>nginx.exe -t -c conf/nginx.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rem 显示版本信息
+</span></span><span style="display:flex;"><span>nginx.exe -v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rem 按照指定配置去启动nginx
+</span></span><span style="display:flex;"><span>nginx.exe -c conf/nginx.conf
+</span></span></code></pre></div><p>如果是运行在 Linux 下，写一个 shell 脚本，大同小异。</p>
+<h2 id="nginx-配置实战">nginx 配置实战<a hidden class="anchor" aria-hidden="true" href="#nginx-配置实战">#</a></h2>
+<p>我始终认为，各种开发工具的配置还是结合实战来讲述，会让人更易理解。</p>
+<h3 id="http-反向代理配置">http 反向代理配置<a hidden class="anchor" aria-hidden="true" href="#http-反向代理配置">#</a></h3>
+<p>我们先实现一个小目标：不考虑复杂的配置，仅仅是完成一个 http 反向代理。</p>
+<p>nginx.conf 配置文件如下： <strong>注：conf / nginx.conf 是 nginx 的默认配置文件。你也可以使用 nginx -c 指定你的配置文件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#75715e">#运行用户
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#user somebody;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#启动进程,通常设置成和cpu的数量相等
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">worker_processes</span>  <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#全局错误日志
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">error_log</span>  <span style="color:#e6db74">D:/Tools/nginx-1.10.1/logs/error.log</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">error_log</span>  <span style="color:#e6db74">D:/Tools/nginx-1.10.1/logs/notice.log</span>  <span style="color:#e6db74">notice</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">error_log</span>  <span style="color:#e6db74">D:/Tools/nginx-1.10.1/logs/info.log</span>  <span style="color:#e6db74">info</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#PID文件，记录当前启动的nginx的进程ID
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">pid</span>        <span style="color:#e6db74">D:/Tools/nginx-1.10.1/logs/nginx.pid</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#工作模式及连接数上限
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">events</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">worker_connections</span> <span style="color:#ae81ff">1024</span>;    <span style="color:#75715e">#单个后台worker process进程的最大并发链接数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#设定http服务器，利用它的反向代理功能提供负载均衡支持
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">http</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#设定mime类型(邮件支持类型),类型由mime.types文件定义
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">include</span>       <span style="color:#e6db74">D:/Tools/nginx-1.10.1/conf/mime.types</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">default_type</span>  <span style="color:#e6db74">application/octet-stream</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#设定日志
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#f92672">log_format</span>  <span style="color:#e6db74">main</span>  <span style="color:#e6db74">&#39;[</span>$remote_addr] <span style="color:#e6db74">-</span> <span style="color:#e6db74">[</span>$remote_user] <span style="color:#e6db74">[</span>$time_local] <span style="color:#e6db74">&#34;</span>$request&#34; <span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#e6db74">&#39;</span>$status $body_bytes_sent <span style="color:#e6db74">&#34;</span>$http_referer&#34; <span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#e6db74">&#39;&#34;</span>$http_user_agent&#34; <span style="color:#e6db74">&#34;</span>$http_x_forwarded_for&#34;&#39;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">access_log</span>    <span style="color:#e6db74">D:/Tools/nginx-1.10.1/logs/access.log</span> <span style="color:#e6db74">main</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rewrite_log</span>     <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#sendfile 指令指定 nginx 是否调用 sendfile 函数（zero copy 方式）来输出文件，对于普通应用，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#必须设为 on,如果用来进行下载等应用磁盘IO重负载应用，可设置为 off，以平衡磁盘与网络I/O处理速度，降低系统的uptime.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">sendfile</span>        <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#tcp_nopush     on;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#连接超时时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">keepalive_timeout</span>  <span style="color:#ae81ff">120</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tcp_nodelay</span>        <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#gzip压缩开关
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">#gzip  on;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#设定实际的服务器列表
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">upstream</span> <span style="color:#e6db74">zp_server1</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">server</span> 127.0.0.1:<span style="color:#ae81ff">8089</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#HTTP服务器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#监听80端口，80端口是知名端口号，用于HTTP协议
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">listen</span>       <span style="color:#ae81ff">80</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#定义使用www.xx.com访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">server_name</span>  <span style="color:#e6db74">www.helloworld.com</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#首页
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#f92672">index</span> <span style="color:#e6db74">index.html</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#指向webapp的目录
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#e6db74">root</span> <span style="color:#e6db74">D:\01_Workspace\Project\github\zp\SpringNotes\spring-security\spring-shiro\src\main\webapp</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#编码格式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#f92672">charset</span> <span style="color:#e6db74">utf-8</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#代理配置参数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">proxy_connect_timeout</span> <span style="color:#ae81ff">180</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">proxy_send_timeout</span> <span style="color:#ae81ff">180</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">proxy_read_timeout</span> <span style="color:#ae81ff">180</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Host</span> $host;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Forwarder-For</span> $remote_addr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#反向代理的路径（和upstream绑定），location 后面设置映射的路径
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://zp_server1</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#静态文件，nginx自己处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">location</span> ~ <span style="color:#e6db74">^/(images|javascript|js|css|flash|media|static)/</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">root</span> <span style="color:#e6db74">D:\01_Workspace\Project\github\zp\SpringNotes\spring-security\spring-shiro\src\main\webapp\views</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#过期30天，静态文件不怎么更新，过期可以设大一点，如果频繁更新，则可以设置得小一点。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">expires</span> <span style="color:#e6db74">30d</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#设定查看Nginx状态的地址
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">location</span> <span style="color:#e6db74">/NginxStatus</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">stub_status</span>           <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">access_log</span>            <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">auth_basic</span>            <span style="color:#e6db74">&#34;NginxStatus&#34;</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">auth_basic_user_file</span>  <span style="color:#e6db74">conf/htpasswd</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#禁止访问 .htxxx 文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">location</span> ~ <span style="color:#e6db74">/\.ht</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">deny</span> <span style="color:#e6db74">all</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#错误处理页面（可选择性配置）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">#error_page   404              /404.html;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">#error_page   500 502 503 504  /50x.html;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">#location = /50x.html {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">#    root   html;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">#}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>好了，让我们来试试吧：</p>
+<ol>
+<li>启动 webapp，注意启动绑定的端口要和 nginx 中的 <code>upstream</code> 设置的端口保持一致。</li>
+<li>更改 host：在 C:\Windows\System32\drivers\etc 目录下的 host 文件中添加一条 DNS 记录</li>
+</ol>
+<pre tabindex="0"><code>127.0.0.1 www.helloworld.com
+</code></pre><ol>
+<li>启动前文中 startup.bat 的命令</li>
+<li>在浏览器中访问 <a href="http://www.helloworld.xn--com,,-ri1hi2ayve9sgnfr4qtgo7zjr48hrtvb1b8a./">www.helloworld.com，不出意外，已经可以访问了。</a></li>
+</ol>
+<h3 id="负载均衡配置">负载均衡配置<a hidden class="anchor" aria-hidden="true" href="#负载均衡配置">#</a></h3>
+<p>上一个例子中，代理仅仅指向一个服务器。</p>
+<p>但是，网站在实际运营过程中，多半都是有多台服务器运行着同样的 app，这时需要使用负载均衡来分流。</p>
+<p>nginx 也可以实现简单的负载均衡功能。</p>
+<p>假设这样一个应用场景：将应用部署在 192.168.1.11:80、192.168.1.12:80、192.168.1.13:80 三台 linux 环境的服务器上。网站域名叫 <a href="http://www.helloworld.xn--com,-tt8fy44v/">www.helloworld.com，公网</a> IP 为 192.168.1.11。在公网 IP 所在的服务器上部署 nginx，对所有请求做负载均衡处理。</p>
+<p>nginx.conf 配置如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">http</span> {
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">#设定mime类型,类型由mime.type文件定义
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">include</span>       <span style="color:#e6db74">/etc/nginx/mime.types</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">default_type</span>  <span style="color:#e6db74">application/octet-stream</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#设定日志格式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">access_log</span>    <span style="color:#e6db74">/var/log/nginx/access.log</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#设定负载均衡的服务器列表
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">upstream</span> <span style="color:#e6db74">load_balance_server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#weigth参数表示权值，权值越高被分配到的几率越大
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">server</span> 192.168.1.11:<span style="color:#ae81ff">80</span>   <span style="color:#e6db74">weight=5</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">server</span> 192.168.1.12:<span style="color:#ae81ff">80</span>   <span style="color:#e6db74">weight=1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">server</span> 192.168.1.13:<span style="color:#ae81ff">80</span>   <span style="color:#e6db74">weight=6</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">#HTTP服务器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#f92672">server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#侦听80端口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">listen</span>       <span style="color:#ae81ff">80</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#定义使用www.xx.com访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">server_name</span>  <span style="color:#e6db74">www.helloworld.com</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#对所有请求进行负载均衡请求
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">root</span>        <span style="color:#e6db74">/root</span>;                 <span style="color:#75715e">#定义服务器的默认网站根目录位置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">index</span>       <span style="color:#e6db74">index.html</span> <span style="color:#e6db74">index.htm</span>;  <span style="color:#75715e">#定义首页索引文件的名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_pass</span>  <span style="color:#e6db74">http://load_balance_server</span> ;<span style="color:#75715e">#请求转向load_balance_server 定义的服务器列表
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#以下是一些反向代理的配置(可选择性配置)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">#proxy_redirect off;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Host</span> $host;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Real-IP</span> $remote_addr;
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#后端的Web服务器可以通过X-Forwarded-For获取用户真实IP
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Forwarded-For</span> $remote_addr;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">proxy_connect_timeout</span> <span style="color:#ae81ff">90</span>;          <span style="color:#75715e">#nginx跟后端服务器连接超时时间(代理连接超时)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_send_timeout</span> <span style="color:#ae81ff">90</span>;             <span style="color:#75715e">#后端服务器数据回传时间(代理发送超时)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_read_timeout</span> <span style="color:#ae81ff">90</span>;             <span style="color:#75715e">#连接成功后，后端服务器响应时间(代理接收超时)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_buffer_size</span> <span style="color:#ae81ff">4k</span>;              <span style="color:#75715e">#设置代理服务器（nginx）保存用户头信息的缓冲区大小
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_buffers</span> <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">32k</span>;               <span style="color:#75715e">#proxy_buffers缓冲区，网页平均在32k以下的话，这样设置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_busy_buffers_size</span> <span style="color:#ae81ff">64k</span>;       <span style="color:#75715e">#高负荷下缓冲大小（proxy_buffers*2）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">proxy_temp_file_write_size</span> <span style="color:#ae81ff">64k</span>;    <span style="color:#75715e">#设定缓存文件夹大小，大于这个值，将从upstream服务器传
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">client_max_body_size</span> <span style="color:#ae81ff">10m</span>;          <span style="color:#75715e">#允许客户端请求的最大单文件字节数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">client_body_buffer_size</span> <span style="color:#ae81ff">128k</span>;      <span style="color:#75715e">#缓冲区代理缓冲用户端请求的最大字节数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="网站有多个-webapp-的配置">网站有多个 webapp 的配置<a hidden class="anchor" aria-hidden="true" href="#网站有多个-webapp-的配置">#</a></h3>
+<p>当一个网站功能越来越丰富时，往往需要将一些功能相对独立的模块剥离出来，独立维护。这样的话，通常，会有多个 webapp。</p>
+<p>举个例子：假如 <a href="http://www.helloworld.com/">www.helloworld.com</a> 站点有好几个 webapp，finance（金融）、product（产品）、admin（用户中心）。访问这些应用的方式通过上下文(context)来进行区分:</p>
+<p><a href="http://www.helloworld.com/finance/">www.helloworld.com/finance/</a></p>
+<p><a href="http://www.helloworld.com/product/">www.helloworld.com/product/</a></p>
+<p><a href="http://www.helloworld.com/admin/">www.helloworld.com/admin/</a></p>
+<p>我们知道，http 的默认端口号是 80，如果在一台服务器上同时启动这 3 个 webapp 应用，都用 80 端口，肯定是不成的。所以，这三个应用需要分别绑定不同的端口号。</p>
+<p>那么，问题来了，用户在实际访问 <a href="http://www.helloworld.com/">www.helloworld.com</a> 站点时，访问不同 webapp，总不会还带着对应的端口号去访问吧。所以，你再次需要用到反向代理来做处理。</p>
+<p>配置也不难，来看看怎么做吧：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">http</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#此处省略一些基本配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">upstream</span> <span style="color:#e6db74">product_server</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">server</span> www.helloworld.com:<span style="color:#ae81ff">8081</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">upstream</span> <span style="color:#e6db74">admin_server</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">server</span> www.helloworld.com:<span style="color:#ae81ff">8082</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">upstream</span> <span style="color:#e6db74">finance_server</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">server</span> www.helloworld.com:<span style="color:#ae81ff">8083</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">server</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">#此处省略一些基本配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">#默认指向product的server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://product_server</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">location</span> <span style="color:#e6db74">/product/</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://product_server</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">location</span> <span style="color:#e6db74">/admin/</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://admin_server</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">location</span> <span style="color:#e6db74">/finance/</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://finance_server</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="https-反向代理配置">https 反向代理配置<a hidden class="anchor" aria-hidden="true" href="#https-反向代理配置">#</a></h3>
+<p>一些对安全性要求比较高的站点，可能会使用 HTTPS（一种使用 ssl 通信标准的安全 HTTP 协议）。</p>
+<p>这里不科普 HTTP 协议和 SSL 标准。但是，使用 nginx 配置 https 需要知道几点：</p>
+<ul>
+<li>HTTPS 的固定端口号是 443，不同于 HTTP 的 80 端口</li>
+<li>SSL 标准需要引入安全证书，所以在 nginx.conf 中你需要指定证书和它对应的 key</li>
+</ul>
+<p>其他和 http 反向代理基本一样，只是在 <code>Server</code> 部分配置有些不同。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span>  <span style="color:#75715e">#HTTP服务器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">server</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#监听443端口。443为知名端口号，主要用于HTTPS协议
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">listen</span>       <span style="color:#ae81ff">443</span> <span style="color:#e6db74">ssl</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#定义使用www.xx.com访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">server_name</span>  <span style="color:#e6db74">www.helloworld.com</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#ssl证书文件位置(常见证书文件格式为：crt/pem)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">ssl_certificate</span>      <span style="color:#e6db74">cert.pem</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#ssl证书key位置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">ssl_certificate_key</span>  <span style="color:#e6db74">cert.key</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#ssl配置参数（选择性配置）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">ssl_session_cache</span>    <span style="color:#e6db74">shared:SSL:1m</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ssl_session_timeout</span>  <span style="color:#ae81ff">5m</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#数字签名，此处使用MD5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#f92672">ssl_ciphers</span>  <span style="color:#e6db74">HIGH:!aNULL:!MD5</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ssl_prefer_server_ciphers</span>  <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">root</span>   <span style="color:#e6db74">/root</span>;
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">index</span>  <span style="color:#e6db74">index.html</span> <span style="color:#e6db74">index.htm</span>;
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h3 id="静态站点配置">静态站点配置<a hidden class="anchor" aria-hidden="true" href="#静态站点配置">#</a></h3>
+<p>有时候，我们需要配置静态站点(即 html 文件和一堆静态资源)。</p>
+<p>举例来说：如果所有的静态资源都放在了 <code>/app/dist</code> 目录下，我们只需要在 <code>nginx.conf</code> 中指定首页以及这个站点的 host 即可。</p>
+<p>配置如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">worker_processes</span>  <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">events</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">worker_connections</span>  <span style="color:#ae81ff">1024</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">http</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">include</span>       <span style="color:#e6db74">mime.types</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">default_type</span>  <span style="color:#e6db74">application/octet-stream</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sendfile</span>        <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">keepalive_timeout</span>  <span style="color:#ae81ff">65</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gzip</span> <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gzip_types</span> <span style="color:#e6db74">text/plain</span> <span style="color:#e6db74">application/x-javascript</span> <span style="color:#e6db74">text/css</span> <span style="color:#e6db74">application/xml</span> <span style="color:#e6db74">text/javascript</span> <span style="color:#e6db74">application/javascript</span> <span style="color:#e6db74">image/jpeg</span> <span style="color:#e6db74">image/gif</span> <span style="color:#e6db74">image/png</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gzip_vary</span> <span style="color:#66d9ef">on</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">server</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">listen</span>       <span style="color:#ae81ff">80</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">server_name</span>  <span style="color:#e6db74">static.zp.cn</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">root</span> <span style="color:#e6db74">/app/dist</span>;
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">index</span> <span style="color:#e6db74">index.html</span>;
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">#转发任何请求到 index.html
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>然后，添加 HOST：</p>
+<p>127.0.0.1 static.zp.cn</p>
+<p>此时，在本地浏览器访问 static.zp.cn ，就可以访问静态站点了。</p>
+<h3 id="跨域解决方案">跨域解决方案<a hidden class="anchor" aria-hidden="true" href="#跨域解决方案">#</a></h3>
+<p>web 领域开发中，经常采用前后端分离模式。这种模式下，前端和后端分别是独立的 web 应用程序，例如：后端是 Java 程序，前端是 React 或 Vue 应用。</p>
+<p>各自独立的 web app 在互相访问时，势必存在跨域问题。解决跨域问题一般有两种思路：</p>
+<ol>
+<li>
+<p><strong>CORS</strong></p>
+<p>在后端服务器设置 HTTP 响应头，把你需要运行访问的域名加入加入 <code>Access-Control-Allow-Origin</code> 中。</p>
+</li>
+<li>
+<p><strong>jsonp</strong></p>
+<p>把后端根据请求，构造 json 数据，并返回，前端用 jsonp 跨域。</p>
+</li>
+</ol>
+<p>以上这两种思路，本文不展开讨论。</p>
+<p>需要说明的是，nginx 根据第一种思路，也提供了一种解决跨域的解决方案。</p>
+<p>举例：<a href="http://www.helloworld.com/">www.helloworld.com</a> 网站是由一个前端 app ，一个后端 app 组成的。前端端口号为 9000， 后端端口号为 8080。</p>
+<p>前端和后端如果使用 http 进行交互时，请求会被拒绝，因为存在跨域问题。来看看，nginx 是怎么解决的吧：</p>
+<p>首先，在 enable-cors.conf 文件中设置 cors ：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#75715e"># allow origin list
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">set</span> $ACAO <span style="color:#e6db74">&#39;*&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># set single origin
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">(</span>$http_origin ~<span style="color:#e6db74">*</span> <span style="color:#e6db74">(www.helloworld.com)</span>$<span style="color:#e6db74">)</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">set</span> $ACAO $http_origin;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">(</span>$cors = <span style="color:#e6db74">&#34;trueget&#34;)</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">add_header</span> <span style="color:#e6db74">&#39;Access-Control-Allow-Origin&#39;</span> <span style="color:#e6db74">&#34;</span>$http_origin&#34;;
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">add_header</span> <span style="color:#e6db74">&#39;Access-Control-Allow-Credentials&#39;</span> <span style="color:#e6db74">&#39;true&#39;</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">add_header</span> <span style="color:#e6db74">&#39;Access-Control-Allow-Methods&#39;</span> <span style="color:#e6db74">&#39;GET,</span> <span style="color:#e6db74">POST,</span> <span style="color:#e6db74">OPTIONS&#39;</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">add_header</span> <span style="color:#e6db74">&#39;Access-Control-Allow-Headers&#39;</span> <span style="color:#e6db74">&#39;DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type&#39;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">(</span>$request_method = <span style="color:#e6db74">&#39;OPTIONS&#39;)</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">set</span> $cors <span style="color:#e6db74">&#34;</span>${cors}options&#34;;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">(</span>$request_method = <span style="color:#e6db74">&#39;GET&#39;)</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">set</span> $cors <span style="color:#e6db74">&#34;</span>${cors}get&#34;;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">(</span>$request_method = <span style="color:#e6db74">&#39;POST&#39;)</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">set</span> $cors <span style="color:#e6db74">&#34;</span>${cors}post&#34;;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>接下来，在你的服务器中 <code>include enable-cors.conf</code> 来引入跨域配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#75715e"># ----------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># 此文件为项目 nginx 配置片段
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># 可以直接在 nginx config 中 include（推荐）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者 copy 到现有 nginx 中，自行配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># www.helloworld.com 域名需配合 dns hosts 进行配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># 其中，api 开启了 cors，需配合本目录下另一份配置文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># ----------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">upstream</span> <span style="color:#e6db74">front_server</span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">server</span> www.helloworld.com:<span style="color:#ae81ff">9000</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">upstream</span> <span style="color:#e6db74">api_server</span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">server</span> www.helloworld.com:<span style="color:#ae81ff">8080</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">server</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">listen</span>       <span style="color:#ae81ff">80</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">server_name</span>  <span style="color:#e6db74">www.helloworld.com</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">location</span> ~ <span style="color:#e6db74">^/api/</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">include</span> <span style="color:#e6db74">enable-cors.conf</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://api_server</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rewrite</span> <span style="color:#e6db74">&#34;^/api/(.*)</span>$&#34; <span style="color:#e6db74">/</span>$1 <span style="color:#e6db74">break</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">location</span> ~ <span style="color:#e6db74">^/</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://front_server</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>到此，就完成了。</p>
+<h2 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h2>
+<p><a href="http://tool.oschina.net/apidocs/apidoc?api=nginx-zh">Nginx 的中文维基</a></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://qingx2.github.io/tags/nginx/">Nginx</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://qingx2.github.io/">Maverick</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

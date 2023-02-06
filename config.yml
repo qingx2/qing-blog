@@ -1,0 +1,5 @@
+baseURL: 'https://qingx2.github.io/'
+languageCode: 'en-us'
+title: 'Maverick'
+paginate: 128
+theme: 'PaperMod'

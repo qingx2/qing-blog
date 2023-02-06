@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Nginx on Maverick</title>
+    <link>https://qingx2.github.io/tags/nginx/</link>
+    <description>Recent content in Nginx on Maverick</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 05 Aug 2018 11:08:21 +0800</lastBuildDate><atom:link href="https://qingx2.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nginx简易教程</title>
+      <link>https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</link>
+      <pubDate>Sun, 05 Aug 2018 11:08:21 +0800</pubDate>
+      
+      <guid>https://qingx2.github.io/post/nginx%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;欢迎 Star 原作者 &lt;a href=&#34;https://github.com/dunwu/Nginx&#34;&gt;dunwu GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;什么是 Nginx?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Nginx (engine x)&lt;/strong&gt; 是一款轻量级的 Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/nginx/nginx.jpg&#34; alt=&#34;&#34;  /&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;什么是反向代理？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

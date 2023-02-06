@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MySQL on Maverick</title>
+    <link>https://qingx2.github.io/tags/mysql/</link>
+    <description>Recent content in MySQL on Maverick</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 07 Apr 2020 12:44:00 +0800</lastBuildDate><atom:link href="https://qingx2.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL索引最左匹配原则理解</title>
+      <link>https://qingx2.github.io/post/mysql%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Tue, 07 Apr 2020 12:44:00 +0800</pubDate>
+      
+      <guid>https://qingx2.github.io/post/mysql%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99%E7%90%86%E8%A7%A3/</guid>
+      <description>作者：沈杰 链接：https://www.zhihu.com/question/36996520/answer/93256153 来源：知乎 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+这是你的表结构，有三个字段，分别是id,name,cid
+CREATE TABLE `student` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) DEFAULT NULL, `cid` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `name_cid_INX` (`name`,`cid`), ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 索引方面：id是主键，(name,cid)是一个多列索引。 -&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;- 下面是你有疑问的两个查询：
+EXPLAIN SELECT * FROM student WHERE cid=1; EXPLAIN SELECT * FROM student WHERE cid=1 AND name=&amp;#39;小红&amp;#39;; 你的疑问是：sql查询用到索引的条件是必须要遵守最左前缀原则，为什么上面两个查询还能用到索引？ -&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;
+讲上面问题之前，我先补充一些知识，因为我觉得你对索引理解是狭隘的： 上述你的两个查询的explain结果中显示用到索引的情况类型是不一样的。,可观察explain结果中的type字段。你的查询中分别是： \1. type: index \2. type: ref
+解释： index：这种类型表示是mysql会对整个该索引进行扫描。要想用到这种类型的索引，对这个索引并无特别要求，只要是索引，或者某个复合索引的一部分，mysql都可能会采用index类型的方式扫描。但是呢，缺点是效率不高，mysql会从索引中的第一个数据一个个的查找到最后一个数据，直到找到符合判断条件的某个索引。
+**所以：**对于你的第一条语句：
+EXPLAIN SELECT * FROM student WHERE cid=1; 判断条件是cid=1,而cid是(name,cid)复合索引的一部分，没有问题，可以进行index类型的索引扫描方式。explain显示结果使用到了索引，是index类型的方式。</description>
+    </item>
+    
+    <item>
+      <title>MySQL重置密码</title>
+      <link>https://qingx2.github.io/post/mysql%E9%87%8D%E7%BD%AE%E5%AF%86%E7%A0%81/</link>
+      <pubDate>Sat, 04 Aug 2018 17:05:54 +0800</pubDate>
+      
+      <guid>https://qingx2.github.io/post/mysql%E9%87%8D%E7%BD%AE%E5%AF%86%E7%A0%81/</guid>
+      <description>&lt;h3 id=&#34;问题描述&#34;&gt;问题描述&lt;/h3&gt;
+&lt;p&gt;今天在 macOS 上使用 Homebrew 安装 MySql ，正常情况下 MySql 会默认分配默认 root 账户 root 密码，但如果之前安装过MySql修改过账户密码，并且后面删除 MySql 服务，因为配置文件还在，所以这个时候不会产生 root 密码，但当自己在终端上使用默认密码登录的时候，总会提示一个授权失败的错误：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Access denied &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; user  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;root&amp;#39;&lt;/span&gt;@&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;using password&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
