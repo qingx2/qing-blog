@@ -1,5 +1,5 @@
 baseURL: 'https://qingx2.github.io/'
 languageCode: 'en-us'
-title: 'Maverick'
+title: "Qing's Blog"
 paginate: 128
 theme: 'PaperMod'
